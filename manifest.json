@@ -6,9 +6,9 @@
 		"36x18": "tutorial.png"
 	},
 	"AppName": {
-		"en": "Spotify Apps API Tutorial"
+		"en": "Studyokee"
 	},
-	"BundleIdentifier": "api-tutorial",
+	"BundleIdentifier": "studyokee",
 	"BundleType": "Application",
 	"BundleVersion": "0.1",
 	"DefaultTabs": [
