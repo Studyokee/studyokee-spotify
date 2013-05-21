@@ -1,6 +1,6 @@
 /**
-* Given a list of TranslationSegments and a MusicPlayer, maintain the correct
-* current segment index given the song position.
+* Given a list of translation segments with a 'start' value in milliseconds and a 
+* MusicPlayer, maintain the correct current segment index given the song position.
 */
 function SegmentPlayer(segments, musicPlayer) {
       var currentIndex = null;
@@ -19,7 +19,7 @@ function SegmentPlayer(segments, musicPlayer) {
             var match = null;
             for (var i = 0; i < segments.length; i++) {
                   var segment = segments[i];
-                  if (isUndefinedOrNull(segment.start) || segment.start > trackPosition) {
+                  if (segment.start === null || segment.start > trackPosition) {
                         return match;
                   }
                   match = i;
@@ -33,7 +33,7 @@ function SegmentPlayer(segments, musicPlayer) {
       var setCurrentIndex = function(i) {
             clearTimeout(showNext);
 
-            if (!i || i < 0) {
+            if (i === null || i < 0) {
                   currentIndex = null;
                   return;
             }
@@ -42,7 +42,7 @@ function SegmentPlayer(segments, musicPlayer) {
 
             // If the music is playing and there is a next segment with a start time, show it later
             var nextSegment = segments[i+1];
-            if (musicPlayer.isPlaying() && nextSegment && !isUndefinedOrNull(nextSegment.start)) {
+            if (musicPlayer.isPlaying() && nextSegment && nextSegment.start !== null) {
                   var delta = nextSegment.start - musicPlayer.getTrackPosition();
                   showNext = setTimeout(next, Math.max(delta, 0));
             }
@@ -55,11 +55,6 @@ function SegmentPlayer(segments, musicPlayer) {
       var next = function() {
             setCurrentIndex(currentIndex + 1);
       };
-
-      var isUndefinedOrNull = function(value) {
-            return value === null || value === undefined;
-      };
-
 
       // TODO: test code, remove later
       var print = function() {
