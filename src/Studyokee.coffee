@@ -1,3 +1,11 @@
+safeApply = ($scope, fn) =>
+  phase = $scope.$root.$$phase
+  if phase == '$apply' or phase == '$digest'
+    if fn and (typeof(fn) == 'function')
+      fn()
+  else
+    $scope.$apply(fn)
+
 angular.module('studyokee', []).
   directive('lyricsplayer', ->
     replace: true
@@ -5,24 +13,21 @@ angular.module('studyokee', []).
     scope: {}
     
     controller: ($scope) ->
-
-      $scope.i = null
-
       update = (i) ->
-        $scope.$apply(() ->
+        safeApply($scope, () ->
           # Do all segment updates here
           $scope.i = i
         )
 
       init = () ->
-        musicPlayer = new SpotifyPlayer()
+        $scope.i = null
 
-        dataProvider = new TestTranslationDataProvider()
-        lyrics = dataProvider.getSegments(musicPlayer.getTrackName())
+        musicPlayer = new SpotifyPlayer()
+        lyrics = new TestTranslationDataProvider().getSegments(musicPlayer.getTrackName())
 
         timer = new LyricsTimer(musicPlayer, lyrics)
-
         timer.addListener(update)
+        timer.init()
 
       init()
 
