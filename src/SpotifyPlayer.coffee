@@ -8,22 +8,18 @@
 ####################################################################
 
 class SpotifyPlayer
-  sp = null
-  models = null
-  player = null
 
   constructor: () ->
-    sp = getSpotifyApi()
-    models = sp.require("$api/models")
-    player = models.player
+    models = getSpotifyApi().require("$api/models")
+    @player = models.player
 
   getTrackPosition: () ->
-    return player.position
+    return @player.position
 
   isPlaying: () ->
-    return player.playing
+    return @player.playing
 
   getTrackName: () ->
-    return player.track.toString()
+    return @player.track.toString()
 
 window.SpotifyPlayer = SpotifyPlayer
