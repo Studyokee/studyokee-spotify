@@ -10,10 +10,11 @@ angular.module('studyokee', []).
   directive('lyricsplayer', ->
     replace: true
     restrict: 'E'
-    scope: {}
+    scope: {
+      lang: '@'
+    }
     
     controller: ($scope) ->
-
       musicPlayer = new SpotifyPlayer()
       dataProvider = new TestTranslationDataProvider()
 
@@ -26,18 +27,23 @@ angular.module('studyokee', []).
 
         return lines
 
-      $scope.lyrics = dataProvider.getSegments(musicPlayer.getTrackName())
-      $scope.i = null
-      $scope.toDisplay = []
+      init = (lang) ->
+        $scope.lyrics = dataProvider.getSegments(musicPlayer.getTrackName(), lang)
+        $scope.i = null
+        $scope.toDisplay = []
 
-      timer = new LyricsTimer(musicPlayer, $scope.lyrics)
-      timer.addListener((i) ->
-        safeApply($scope, () ->
-          $scope.i = i
-          $scope.lines = getLines($scope.lyrics, $scope.i)
+        timer = new LyricsTimer(musicPlayer, $scope.lyrics)
+        timer.addListener((i) ->
+          safeApply($scope, () ->
+            $scope.i = i
+            $scope.lines = getLines($scope.lyrics, $scope.i)
+          )
         )
+        timer.init()
+
+      $scope.$watch('lang', () ->
+        init($scope.lang)
       )
-      timer.init()
 
     template: 
       '<ul>' +
