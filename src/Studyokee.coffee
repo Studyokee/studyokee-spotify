@@ -13,26 +13,36 @@ angular.module('studyokee', []).
     scope: {}
     
     controller: ($scope) ->
-      update = (i) ->
+
+      musicPlayer = new SpotifyPlayer()
+      dataProvider = new TestTranslationDataProvider()
+
+      getLines = (lyrics, currentLine, before=5, after=5) ->
+        lines = []
+        start = currentLine - before
+        end = currentLine + after
+        for i in [start..end]
+          lines.push(lyrics[i])
+
+        return lines
+
+      $scope.lyrics = dataProvider.getSegments(musicPlayer.getTrackName())
+      $scope.i = null
+      $scope.toDisplay = []
+
+      timer = new LyricsTimer(musicPlayer, $scope.lyrics)
+      timer.addListener((i) ->
         safeApply($scope, () ->
-          # Do all segment updates here
           $scope.i = i
+          $scope.lines = getLines($scope.lyrics, $scope.i)
         )
-
-      init = () ->
-        $scope.i = null
-
-        musicPlayer = new SpotifyPlayer()
-        lyrics = new TestTranslationDataProvider().getSegments(musicPlayer.getTrackName())
-
-        timer = new LyricsTimer(musicPlayer, lyrics)
-        timer.addListener(update)
-        timer.init()
-
-      init()
+      )
+      timer.init()
 
     template: 
-      '<div>' +
-        '{{i}}' +
-      '</div>'
+      '<ul>' +
+        '<li ng-repeat="line in lines">' +
+          '{{line.text}}' +
+        '</li>' +
+      '</ul>'
   )
