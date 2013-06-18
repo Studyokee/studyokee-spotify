@@ -1,5 +1,7 @@
 <!DOCTYPE html>
     <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.js"></script>
+
         <!-- Spotify CSS files -->
         <link rel="stylesheet" type="text/css" href="sp://resources/css/eve.css">
         <link rel="stylesheet" type="text/css" href="sp://resources/css/api.css">
@@ -10,11 +12,16 @@
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <link rel="stylesheet" type="text/css" href="css/github.css">
 
-        <SCRIPT type="text/javascript" src="/js/SpotifyPlayer.js"/></SCRIPT>
-        <SCRIPT type="text/javascript" src="/js/SegmentPlayer.js"></SCRIPT>
-        <SCRIPT type="text/javascript" src="/js/TestTranslationDataProvider.js"></SCRIPT>
+        <script type="text/javascript" src="/lib/TestTranslationDataProvider.js"/></script>
+        <script type="text/javascript" src="/lib/SpotifyPlayer.js"/></script>
+        <script type="text/javascript" src="/lib/Studyokee.js"/></script>
+        <script type="text/javascript" src="/lib/LyricsTimer.js"/></script>
     </head>
     <body>
-        <SCRIPT type="text/javascript" src="/js/main.js"></SCRIPT>
+
+        <div ng-app="studyokee">
+          <lyricsplayer/>
+        </div>
+
     </body>
 </html>
