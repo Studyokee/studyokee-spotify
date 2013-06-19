@@ -39,7 +39,7 @@ angular.module('studyokee', []).
             $scope.lines = getLines($scope.lyrics, $scope.i)
           )
         )
-        timer.init()
+        timer.sync()
 
       $scope.$watch('lang', () ->
         init($scope.lang)
