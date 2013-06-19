@@ -9,22 +9,24 @@ class LyricsTimer
   notifyListeners: (i) ->
     fn(i) for fn in @listeners
 
-  setCurrentIndex: (i) ->
-    # only update index if the segment exists
-    if not @lyrics[i]?
-      return
+  sync: () ->
+    trackPosition = @musicPlayer.getTrackPosition()
+    
+    # find correct segment    
+    i = 0
+    while @lyrics[i+1] and @lyrics[i+1].ts < trackPosition
+      i++
 
     @notifyListeners(i)
 
-    # if music is playing and there is a valid next segment, start timer
     nextSegment = @lyrics[i+1]
-    if @musicPlayer.isPlaying() and nextSegment and nextSegment.ts?
-      delta = nextSegment.ts - @musicPlayer.getTrackPosition()
-      next = () =>
-        @setCurrentIndex(i+1)
-      setTimeout(next, Math.max(delta, 0))
+    if not nextSegment? or not @musicPlayer.isPlaying()
+      return
 
-  init: () ->
-    @setCurrentIndex(0)
+    # set next expected time to sync
+    delta = nextSegment.ts - trackPosition
+    next = () =>
+      @sync()
+    setTimeout(next, Math.max(delta, 0))
 
 window.LyricsTimer = LyricsTimer
