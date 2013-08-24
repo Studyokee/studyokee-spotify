@@ -1,0 +1,30 @@
+body {
+	background-color: #333333;
+}
+.so-pane {
+	width: 50%;
+}
+.so-viewport {
+	height: 500px;
+	overflow: hidden;
+	margin: 8px;
+	border: 1px solid #007730;
+	background-color: #63DB93;
+	border-radius: 3px;
+	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
+	text-shadow: none;
+}
+.so-lyricsPlayer li div {
+	height: 30px;
+	line-height: 24px;
+	font-size: 14px;
+	padding: 0 8px;
+	color: #333333;
+}
+.so-lyricsPlayer li div.selected {
+	height: 100px;
+	line-height: 50px;
+	font-size: 24px;
+	background-color: #FFFFFF;
+	color: #000000;
+}

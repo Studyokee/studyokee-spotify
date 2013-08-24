@@ -19,7 +19,10 @@ class SpotifyPlayer
   isPlaying: () ->
     return @player.playing
 
-  getTrackName: () ->
-    return @player.track.toString()
+  getSong: () ->
+    return @player.track.name
+
+  getArtist: () ->
+    return @player.track.artists[0].name
 
 window.SpotifyPlayer = SpotifyPlayer
