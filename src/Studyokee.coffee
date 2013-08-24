@@ -11,12 +11,13 @@ angular.module('studyokee', []).
     replace: true
     restrict: 'E'
     scope: {
-      lang: '@'
+      language: '@'
     }
     
     controller: ($scope) ->
       musicPlayer = new SpotifyPlayer()
-      dataProvider = new TestTranslationDataProvider()
+      dataProvider = new TuneWikiDataProvider()
+      #dataProvider = new TestTranslationDataProvider()
       timer = null
 
       $scope.$watch('lyrics', () ->
@@ -34,15 +35,19 @@ angular.module('studyokee', []).
           timer.start(musicPlayer.getTrackPosition())
       )
 
-      $scope.$watch('lang', () ->
+      $scope.$watch('language', () ->
         onSuccess = (segments) ->
           lyrics = []
-          i = 0
+          i = 1
           while segments[i]?
             lyrics.push(segments[i])
             i++
-          $scope.lyrics = lyrics
-        dataProvider.getSegments(musicPlayer.getTrackName(), $scope.lang, onSuccess)
+
+          fn = () ->
+            $scope.lyrics = lyrics
+          safeApply($scope, fn)
+          
+        dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), $scope.language, onSuccess)
       )
 
     template: 

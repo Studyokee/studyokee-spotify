@@ -2,26 +2,16 @@
 #Interface:
 #
 # TranslationDataProvider = () ->
-#   getSegments(track, lang, onSuccess)
+#   getSegments(artist, song, language, onSuccess)
 #
 ####################################################################
 
 class TuneWikiDataProvider
-  getSegments: (track, lang, onSuccess) ->
-    url = '/lyrics/' + track
-    header =
-      'Accept': 'JSON'
-      'Accept-Language': lang
-
-    success = (response) ->
-      debugger
-      onSuccess(response)
-
+  getSegments: (artist, song, language, onSuccess) ->
     $.ajax(
-      url: url
+      url: 'http://localhost:3000/lyrics?artist=' + artist + '&song=' + song + '&language=' + language
       type: 'GET'
-      header: header
-      success: success
+      success: onSuccess
     )
 
 window.TuneWikiDataProvider = TuneWikiDataProvider
