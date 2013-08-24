@@ -1,32 +1,59 @@
+####################################################################
+# 
+# LyricsTimer.coffee
+#
+# Given an array of lyrics objects with a "ts" field, notifies
+# listeners when the segment updates.  Must manually start and
+# stop the timer on user events.  It will naturally terminate
+# when it runs out of segments.
+#
+####################################################################
+
 class LyricsTimer
 
-  constructor: (@musicPlayer, @lyrics) ->
+  constructor: (lyricsSegments) ->
+    # purify data
+    @timestamps = []
+    i = 0
+    while lyricsSegments[i]
+      if not lyricsSegments[i].ts?
+        throw "no timestamp"
+      if i > 0 and lyricsSegments[i].ts <= @timestamps[i - 1]
+        throw "timestamp not greater than previous"
+
+      @timestamps.push(lyricsSegments[i].ts)
+      i++
+
     @listeners = []
+    @timeoutId = null
 
   addListener: (fn) ->
     @listeners.push(fn)
 
-  notifyListeners: (i) ->
-    fn(i) for fn in @listeners
+  start: (currentTime) ->
+    @sync(currentTime)
 
-  sync: () ->
-    trackPosition = @musicPlayer.getTrackPosition()
-    
-    # find correct segment    
+  stop: () ->
+    clearTimeout(@timeoutId)
+
+  sync: (currentTime) ->
+    # find correct timestamp    
     i = 0
-    while @lyrics[i+1] and @lyrics[i+1].ts < trackPosition
+    while @timestamps[i] < currentTime
       i++
 
-    @notifyListeners(i)
+    # notifyListeners
+    fn(i) for fn in @listeners
 
-    nextSegment = @lyrics[i+1]
-    if not nextSegment? or not @musicPlayer.isPlaying()
+    # set next expected time to find segment and update listeners
+    nextTime = @timestamps[i+1]
+    if not nextTime?
       return
 
-    # set next expected time to sync
-    delta = nextSegment.ts - trackPosition
+    delta = nextTime - currentTime
     next = () =>
-      @sync()
-    setTimeout(next, Math.max(delta, 0))
+      @sync(currentTime + delta)
+    clearTimeout(@timeoutId)
+    @timeoutId = setTimeout(next, Math.max(delta, 0))
 
 window.LyricsTimer = LyricsTimer

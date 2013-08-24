@@ -1,15 +1,17 @@
 <!DOCTYPE html>
     <head>
-        <script src="/components/jquery/jquery.min.js"></script>
-        <script src="/components/angular/angular.min.js"></script>
+        <script src="/bower_components/jquery/jquery.min.js"></script>
+        <script src="/bower_components/angular/angular.min.js"></script>
 
         <!-- Spotify CSS files -->
         <link rel="stylesheet" type="text/css" href="sp://resources/css/eve.css">
         <link rel="stylesheet" type="text/css" href="sp://resources/css/api.css">
         <link rel="stylesheet" type="text/css" href="sp://resources/css/player.css">
         <link rel="stylesheet" type="text/css" href="sp://resources/css/list.css">
+        <link rel="stylesheet" type="text/css" href="/index.css">
 
         <script type="text/javascript" src="/lib/TestTranslationDataProvider.js"/></script>
+        <script type="text/javascript" src="/lib/TuneWikiDataProvider.js"/></script>
         <script type="text/javascript" src="/lib/SpotifyPlayer.js"/></script>
         <script type="text/javascript" src="/lib/Studyokee.js"/></script>
         <script type="text/javascript" src="/lib/LyricsTimer.js"/></script>
@@ -17,11 +19,15 @@
     <body>
 
         <div ng-app="studyokee">
-            <div style="width: 50%; float: left;">
-                <lyricsplayer></lyricsplayer>
+            <div style="float: left;" class="so-pane">
+                <div class="so-viewport">
+                    <lyricsplayer language="es" class="so-lyricsPlayer"></lyricsplayer>
+                </div>
             </div>
-            <div style="width: 50%; float: right;">
-                <lyricsplayer lang="FR"></lyricsplayer>
+            <div style="float: right;" class="so-pane">
+                <div class="so-viewport">
+                    <lyricsplayer language="en" class="so-lyricsPlayer"></lyricsplayer>
+                </div>
             </div>
         </div>
 
