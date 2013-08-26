@@ -1,7 +1,8 @@
 <!DOCTYPE html>
     <head>
-        <script src="/bower_components/jquery/jquery.min.js"></script>
-        <script src="/bower_components/angular/angular.min.js"></script>
+        <script src="/bower_components/jquery/jquery.js"></script>
+        <script src="/bower_components/underscore/underscore.js"></script>
+        <script src="/bower_components/backbone/backbone.js"></script>
 
         <!-- Spotify CSS files -->
         <link rel="stylesheet" type="text/css" href="sp://resources/css/eve.css">
@@ -10,26 +11,24 @@
         <link rel="stylesheet" type="text/css" href="sp://resources/css/list.css">
         <link rel="stylesheet" type="text/css" href="/index.css">
 
-        <script type="text/javascript" src="/lib/TestTranslationDataProvider.js"/></script>
         <script type="text/javascript" src="/lib/TuneWikiDataProvider.js"/></script>
         <script type="text/javascript" src="/lib/SpotifyPlayer.js"/></script>
-        <script type="text/javascript" src="/lib/Studyokee.js"/></script>
         <script type="text/javascript" src="/lib/LyricsTimer.js"/></script>
     </head>
     <body>
 
-        <div ng-app="studyokee">
-            <div style="float: left;" class="so-pane">
-                <div class="so-viewport">
-                    <lyricsplayer language="es" class="so-lyricsPlayer"></lyricsplayer>
+        <div id="skee">
+            <div>
+                <div class="skee-pane">
+                    <div class="skee-viewport" id="skee-original"></div>
                 </div>
-            </div>
-            <div style="float: right;" class="so-pane">
-                <div class="so-viewport">
-                    <lyricsplayer language="en" class="so-lyricsPlayer"></lyricsplayer>
+                <div class="skee-pane">
+                    <div class="skee-viewport" id="skee-translation"></div>
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript" src="/lib/Studyokee.js"/></script>
 
     </body>
 </html>
