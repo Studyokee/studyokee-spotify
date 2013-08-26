@@ -1,61 +1,81 @@
-safeApply = ($scope, fn) ->
-  phase = $scope.$root.$$phase
-  if phase is '$apply' or phase is '$digest'
-    if fn and typeof(fn) is 'function'
-      fn()
-  else
-    $scope.$apply(fn)
+LyricsModel = Backbone.Model.extend()
 
-angular.module('studyokee', []).
-  directive('lyricsplayer', ->
-    replace: true
-    restrict: 'E'
-    scope: {
-      language: '@'
-    }
-    
-    controller: ($scope) ->
-      musicPlayer = new SpotifyPlayer()
-      dataProvider = new TuneWikiDataProvider()
-      #dataProvider = new TestTranslationDataProvider()
-      timer = null
+LyricsView = Backbone.View.extend(
+  tagName:  "ul"
+  className: "skee-lyricsPlayer"
 
-      $scope.$watch('lyrics', () ->
-        if timer?
-          timer.stop()
-        if $scope.lyrics?
-          timer = new LyricsTimer($scope.lyrics)
-          timer.addListener((i) ->
-            safeApply($scope, () ->
-              # update current div focus
-              $scope.topMargin = -(i * 30) + 180
-              $scope.i = i
-            )
-          )
-          timer.start(musicPlayer.getTrackPosition())
+  initialize: () ->
+    dataProvider = this.model.get('dataProvider')
+    musicPlayer = this.model.get('musicPlayer')
+    language = this.model.get('language')
+
+    onSuccess = (segments) =>
+      lyrics = []
+      i = 1
+      while segments[i]?
+        lyrics.push(segments[i])
+        i++
+
+      this.model.set(
+        lyrics: lyrics
       )
 
-      $scope.$watch('language', () ->
-        onSuccess = (segments) ->
-          lyrics = []
-          i = 1
-          while segments[i]?
-            lyrics.push(segments[i])
-            i++
+      timer = new LyricsTimer(lyrics)
+      timer.addListener((i) =>
+        topMargin = -(i * 60) + 180
+        this.$el.css('margin-top', topMargin + 'px')
 
-          fn = () ->
-            $scope.lyrics = lyrics
-          safeApply($scope, fn)
-          
-        dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), $scope.language, onSuccess)
+        this.$('.lyricLine').each((index, el) ->
+          if index is i
+            $(el).addClass('selected')
+          else 
+            $(el).removeClass('selected')
+        )
       )
+      timer.start(musicPlayer.getTrackPosition())
 
-    template: 
-      '<ul style="margin-top:{{topMargin}}px;">' +
-        '<li ng-repeat="line in lyrics">' +
-          '<div ng-class="{selected: $index==i}">' +
-            '{{line.text}}' +
-          '</div>' +
-        '</li>' +
-      '</ul>'
-  )
+    dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), language, onSuccess)
+
+    this.listenTo(this.model, 'change', this.render)
+
+  render: () ->
+    lyricsList = "<% _.each(lyrics, function(lyricLine) { %> <li class='lyricLine'><%= lyricLine.text %></li> <% }); %>"
+    this.$el.html(_.template(lyricsList, {lyrics : this.model.get('lyrics')}))
+
+    return this
+)
+
+AppView = Backbone.View.extend(
+  el: $("#skee"),
+
+  initialize: () ->
+    musicPlayer = new SpotifyPlayer()
+    dataProvider = new TuneWikiDataProvider()
+
+    originalLyricsModel = new LyricsModel(
+      musicPlayer: musicPlayer
+      dataProvider: dataProvider
+      language: 'en'
+    )
+    this.originalLyricsView = new LyricsView(
+      model: originalLyricsModel
+    )
+
+    translatedLyricsModel = new LyricsModel(
+      musicPlayer: musicPlayer
+      dataProvider: dataProvider
+      language: 'fr'
+    )
+    this.translatedLyricsView = new LyricsView(
+      model: translatedLyricsModel
+    )
+
+    this.$('#skee-original').append(this.originalLyricsView.render().el)
+    this.$('#skee-translation').append(this.translatedLyricsView.render().el)
+
+)
+
+app = new Backbone.Model
+appView = new AppView(
+  model: app
+)
