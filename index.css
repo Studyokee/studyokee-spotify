@@ -1,10 +1,11 @@
 body {
 	background-color: #333333;
 }
-.so-pane {
-	width: 50%;
+.skee-pane {
+	width: 49%;
+	display: inline-block;
 }
-.so-viewport {
+.skee-viewport {
 	height: 500px;
 	overflow: hidden;
 	margin: 8px;
@@ -14,14 +15,14 @@ body {
 	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
 	text-shadow: none;
 }
-.so-lyricsPlayer li div {
-	height: 30px;
+.skee-lyricsPlayer li {
+	height: 60px;
 	line-height: 24px;
 	font-size: 14px;
 	padding: 0 8px;
 	color: #333333;
 }
-.so-lyricsPlayer li div.selected {
+.skee-lyricsPlayer li.selected {
 	height: 100px;
 	line-height: 50px;
 	font-size: 24px;
