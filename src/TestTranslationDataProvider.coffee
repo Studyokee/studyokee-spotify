@@ -9,8 +9,8 @@
 class TestTranslationDataProvider
   getSegments: (artist, song, language, onSuccess) ->
     segments = {}
-    for i in [1..30]
-      switch lang
+    for i in [0..300]
+      switch language
         when "en"
           segment = 
             ts: (i-1) * 1000
@@ -23,6 +23,6 @@ class TestTranslationDataProvider
       segments[i] = segment
     fn = () ->
       onSuccess(segments)
-    setTimeout(fn, 500)
+    setTimeout(fn, 100)
     
 window.TestTranslationDataProvider = TestTranslationDataProvider

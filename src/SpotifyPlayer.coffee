@@ -16,6 +16,9 @@ class SpotifyPlayer
   getTrackPosition: () ->
     return @player.position
 
+  setTrackPosition: (ts) ->
+    @player.position = ts
+
   isPlaying: () ->
     return @player.playing
 

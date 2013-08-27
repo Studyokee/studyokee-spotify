@@ -1,5 +1,9 @@
-body {
-	background-color: #333333;
+html, body {
+	background-color: #999;
+}
+ul {
+	list-style: none;
+	padding-left: 0;
 }
 .skee-pane {
 	width: 49%;
@@ -9,23 +13,32 @@ body {
 	height: 500px;
 	overflow: hidden;
 	margin: 8px;
-	border: 1px solid #007730;
-	background-color: #63DB93;
+	border: 1px solid #000;
+	background-color: #79B2B5;
 	border-radius: 3px;
 	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
 	text-shadow: none;
 }
-.skee-lyricsPlayer li {
+.skee-lyrics li {
 	height: 60px;
 	line-height: 24px;
 	font-size: 14px;
 	padding: 0 8px;
-	color: #333333;
+	color: #000;
 }
-.skee-lyricsPlayer li.selected {
+.skee-lyrics li.selected {
 	height: 100px;
 	line-height: 50px;
 	font-size: 24px;
-	background-color: #FFFFFF;
-	color: #000000;
+	background-color: #E6E6E6;
+	color: #000;
+}
+.skee-lyricsPlayer {
+	text-align: center;
+}
+.skee-lyricsPlayer button {
+	height: 50px;
+	width: 100px;
+	background-color: #E6E6E6;
+	border: 1px solid #000;
 }
