@@ -14,7 +14,7 @@ class TuneWikiDataProvider
       while lyrics[i+1]?
         lyricsArray.push(lyrics[i+1])
         i++
-
+      
       onSuccess(lyricsArray)
 
     $.ajax(

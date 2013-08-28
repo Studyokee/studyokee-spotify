@@ -8,7 +8,7 @@
 
 class TestTranslationDataProvider
   getSegments: (artist, song, language, onSuccess) ->
-    segments = {}
+    segments = []
     for i in [0..300]
       switch language
         when "en"
@@ -20,7 +20,8 @@ class TestTranslationDataProvider
             ts: (i-1) * 1000
             text: "Test Lyric " + i
 
-      segments[i] = segment
+      segments.push(segment)
+      
     fn = () ->
       onSuccess(segments)
     setTimeout(fn, 100)

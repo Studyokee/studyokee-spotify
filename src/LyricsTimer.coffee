@@ -38,7 +38,10 @@ class LyricsTimer
 
     @timeoutId = setTimeout(next, Math.max(delta, 0))
 
-  stop: () ->
+  clear: () ->
     clearTimeout(@timeoutId)
+
+  setCallback: (callback) ->
+    @callback = callback
 
 window.LyricsTimer = LyricsTimer

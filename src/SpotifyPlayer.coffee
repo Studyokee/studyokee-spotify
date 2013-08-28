@@ -19,6 +19,12 @@ class SpotifyPlayer
   setTrackPosition: (ts) ->
     @player.position = ts
 
+  play: () ->
+    @player.playing = true
+
+  pause: () ->
+    @player.playing = false
+
   isPlaying: () ->
     return @player.playing
 
