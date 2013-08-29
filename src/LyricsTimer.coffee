@@ -11,7 +11,7 @@
 
 class LyricsTimer
 
-  constructor: (lyricsSegments) ->
+  constructor: (lyricsSegments, callback) ->
     # purify data
     @timestamps = []
     i = 0
@@ -24,36 +24,24 @@ class LyricsTimer
       @timestamps.push(lyricsSegments[i].ts)
       i++
 
-    @listeners = []
+    @callback = callback
     @timeoutId = null
 
-  addListener: (fn) ->
-    @listeners.push(fn)
-
-  start: (currentTime) ->
-    @sync(currentTime)
-
-  stop: () ->
-    clearTimeout(@timeoutId)
-
-  sync: (currentTime) ->
-    # find correct timestamp    
-    i = 0
-    while @timestamps[i] < currentTime
-      i++
-
-    # notifyListeners
-    fn(i) for fn in @listeners
-
-    # set next expected time to find segment and update listeners
+  start: (i, currentTime) ->
     nextTime = @timestamps[i+1]
     if not nextTime?
       return
 
     delta = nextTime - currentTime
     next = () =>
-      @sync(currentTime + delta)
-    clearTimeout(@timeoutId)
+      @callback()
+
     @timeoutId = setTimeout(next, Math.max(delta, 0))
+
+  clear: () ->
+    clearTimeout(@timeoutId)
+
+  setCallback: (callback) ->
+    @callback = callback
 
 window.LyricsTimer = LyricsTimer

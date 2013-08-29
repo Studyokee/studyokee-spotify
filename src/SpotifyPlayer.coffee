@@ -10,11 +10,20 @@
 class SpotifyPlayer
 
   constructor: () ->
-    models = getSpotifyApi().require("$api/models")
-    @player = models.player
+    @models = getSpotifyApi().require("$api/models")
+    @player = @models.player
 
   getTrackPosition: () ->
     return @player.position
+
+  setTrackPosition: (ts) ->
+    @player.position = ts
+
+  play: () ->
+    @player.playing = true
+
+  pause: () ->
+    @player.playing = false
 
   isPlaying: () ->
     return @player.playing
@@ -24,5 +33,8 @@ class SpotifyPlayer
 
   getArtist: () ->
     return @player.track.artists[0].name
+
+  onSongChange: (callback) ->
+    @player.observe(@models.EVENT.CHANGE, callback)
 
 window.SpotifyPlayer = SpotifyPlayer
