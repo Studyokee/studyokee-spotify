@@ -1,81 +1,123 @@
-LyricsModel = Backbone.Model.extend()
-
-LyricsView = Backbone.View.extend(
-  tagName:  "ul"
-  className: "skee-lyricsPlayer"
-
-  initialize: () ->
-    dataProvider = this.model.get('dataProvider')
-    musicPlayer = this.model.get('musicPlayer')
-    language = this.model.get('language')
-
-    onSuccess = (segments) =>
-      lyrics = []
-      i = 1
-      while segments[i]?
-        lyrics.push(segments[i])
-        i++
-
-      this.model.set(
-        lyrics: lyrics
-      )
-
-      timer = new LyricsTimer(lyrics)
-      timer.addListener((i) =>
-        topMargin = -(i * 60) + 180
-        this.$el.css('margin-top', topMargin + 'px')
-
-        this.$('.lyricLine').each((index, el) ->
-          if index is i
-            $(el).addClass('selected')
-          else 
-            $(el).removeClass('selected')
-        )
-      )
-      timer.start(musicPlayer.getTrackPosition())
-
-    dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), language, onSuccess)
-
-    this.listenTo(this.model, 'change', this.render)
-
-  render: () ->
-    lyricsList = "<% _.each(lyrics, function(lyricLine) { %> <li class='lyricLine'><%= lyricLine.text %></li> <% }); %>"
-    this.$el.html(_.template(lyricsList, {lyrics : this.model.get('lyrics')}))
-
-    return this
-)
+# requires Lyrics.coffee
 
 AppView = Backbone.View.extend(
-  el: $("#skee"),
+  el: $("#skee")
+  
+  initialize: () ->
+    this.$('#skee-original').append(this.model.get('originalLyricsView').render().el)
+    this.$('#skee-translation').append(this.model.get('translatedLyricsView').render().el)
+
+    # Add controls
+    this.enableButtons()
+    this.enableKeyboard()
+
+  enableButtons: () ->
+    this.$('#skee-prev').on('click', () =>
+      model.prev() for model in this.model.get('lyricsModels'))
+    this.$('#skee-next').on('click', () =>
+      model.next() for model in this.model.get('lyricsModels'))
+
+    this.$('#skee-togglePlay').on('click', () =>
+      this.togglePlay())
+    this.syncPlayButton()
+
+    this.$('#skee-toggleRepeatOne').on('click', () =>
+      this.toggleRepeatOne())
+
+  enableKeyboard: () ->
+    window.onkeypress = (event) =>
+      this.handleKeyEvents(event)
+
+  togglePlay: () ->
+    if this.model.get('musicPlayer').isPlaying()
+      model.pause() for model in this.model.get('lyricsModels')
+    else
+      model.play() for model in this.model.get('lyricsModels')
+
+    this.syncPlayButton()
+
+  toggleRepeatOne: () ->
+    repeatOneButton = this.$('#skee-toggleRepeatOne')
+    if repeatOneButton.hasClass('selected')
+      repeatOneButton.removeClass('selected')
+      this.model.get('originalLyricsModel').removeRepeatone()
+    else 
+      repeatOneButton.addClass('selected')
+      this.model.get('originalLyricsModel').addRepeatone()
+
+  syncPlayButton: () ->
+    text = if this.model.get('musicPlayer').isPlaying() then 'pause' else 'play'
+    this.$('#skee-togglePlay').html(text)
+
+  handleKeyEvents: (event) ->
+    switch event.keyCode
+      when 97
+        # a (left arrow)
+        model.prev() for model in this.model.get('lyricsModels')
+      when 100
+        # d (right arrow)
+        model.next() for model in this.model.get('lyricsModels')
+      when 115
+        # s (down arrow)
+        this.togglePlay()
+      when 102
+        # f 
+        this.toggleRepeatOne()
+      else
+        console.log(event.keyCode)
+
+)
+AppModel = Backbone.Model.extend(
 
   initialize: () ->
     musicPlayer = new SpotifyPlayer()
-    dataProvider = new TuneWikiDataProvider()
+    #dataProvider = new TuneWikiDataProvider()
+    dataProvider = new TestTranslationDataProvider()
 
-    originalLyricsModel = new LyricsModel(
+    lyricsModels = []
+
+    originalLyricsModel = new MasterLyricsModel(
       musicPlayer: musicPlayer
-      dataProvider: dataProvider
-      language: 'en'
     )
-    this.originalLyricsView = new LyricsView(
+    originalLyricsView = new LyricsView(
       model: originalLyricsModel
     )
 
+    lyricsModels.push(originalLyricsModel)
+
     translatedLyricsModel = new LyricsModel(
       musicPlayer: musicPlayer
-      dataProvider: dataProvider
-      language: 'fr'
     )
-    this.translatedLyricsView = new LyricsView(
+    translatedLyricsView = new LyricsView(
       model: translatedLyricsModel
     )
+    lyricsModels.push(translatedLyricsModel)
 
-    this.$('#skee-original').append(this.originalLyricsView.render().el)
-    this.$('#skee-translation').append(this.translatedLyricsView.render().el)
+    this.set(
+      originalLyricsView: originalLyricsView
+      translatedLyricsView: translatedLyricsView
+      musicPlayer: musicPlayer
+      lyricsModels: [originalLyricsModel, translatedLyricsModel]
+      originalLyricsModel: originalLyricsModel
+    )
+
+    callback = (lyrics) =>
+      originalLyricsModel.set(
+        lyrics: lyrics.originalLyrics
+      )
+      translatedLyricsModel.set(
+        lyrics: lyrics.translatedLyrics
+      )
+
+    language = 'en'
+    dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), language, callback)
+
+    musicPlayer.onSongChange(() ->
+      dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), language, callback)
+    )
 
 )
-
-app = new Backbone.Model
+app = new AppModel
 appView = new AppView(
   model: app
 )
