@@ -17,8 +17,14 @@ class TuneWikiDataProvider
       
       onSuccess(lyricsArray)
 
+    url = 'http://localhost:3000/lyrics?'
+    url += 'artist=' + artist
+    url += '&song=' + song
+    if language
+      url += '&language=' + language
+
     $.ajax(
-      url: 'http://localhost:3000/lyrics?artist=' + artist + '&song=' + song + '&language=' + language
+      url: url
       type: 'GET'
       success: success
     )

@@ -52,11 +52,13 @@ window.LyricsModel = Backbone.Model.extend(
     this.set(
       i: Math.max(this.get('i') - 1, 0)
     )
+    this.startTimer()
 
   next: () ->
     this.set(
       i: Math.min(this.get('i') + 1, this.get('lyrics').length - 1)
     )
+    this.startTimer()
 
   play: () ->
     this.startTimer()
@@ -78,12 +80,14 @@ window.MasterLyricsModel = LyricsModel.extend(
       i: Math.max(this.get('i') - 1, 0)
     )
     this.syncTrackPosition()
+    this.startTimer()
 
   next: () ->
     this.set(
       i: Math.min(this.get('i') + 1, this.get('lyrics').length - 1)
     )
     this.syncTrackPosition()
+    this.startTimer()
 
   play: () ->
     this.get('musicPlayer').play()

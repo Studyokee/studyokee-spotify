@@ -5,15 +5,14 @@ AppView = Backbone.View.extend(
   
   initialize: () ->
     this.musicPlayer = new SpotifyPlayer()
-    #dataProvider = new TuneWikiDataProvider()
-    dataProvider = new TestTranslationDataProvider()
+    dataProvider = new TuneWikiDataProvider()
+    #dataProvider = new TestTranslationDataProvider()
 
     this.lyricsModels = []
 
     this.originalLyricsModel = new MasterLyricsModel(
       musicPlayer: this.musicPlayer
       dataProvider: dataProvider
-      language: 'es'
     )
     originalLyricsView = new LyricsView(
       model: this.originalLyricsModel
