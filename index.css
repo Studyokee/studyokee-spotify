@@ -23,15 +23,16 @@ ul {
 	text-shadow: none;
 }
 .skee-lyrics li {
-	height: 60px;
-	line-height: 24px;
+	height: 32px;
+	line-height: 16px;
 	font-size: 14px;
-	padding: 0 8px;
+	padding: 8px;
 	color: #000;
+	overflow: hidden;
 }
 .skee-lyrics li.selected {
-	height: 100px;
-	line-height: 50px;
+	height: auto;
+	line-height: 36px;
 	font-size: 24px;
 	background-color: #E6E6E6;
 	color: #000;

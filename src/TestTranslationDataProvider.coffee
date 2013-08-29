@@ -8,22 +8,24 @@
 
 class TestTranslationDataProvider
   getSegments: (artist, song, language, onSuccess) ->
-    segments = []
+    originalLyrics = []
+    translatedLyrics = []
     for i in [0..300]
-      switch language
-        when "en"
-          segment = 
-            ts: (i-1) * 1000
-            text: "Lyriques " + i
-        else
-          segment = 
-            ts: (i-1) * 1000
-            text: "Test Lyric " + i
-
-      segments.push(segment)
+      ts = (i-1) * 1000
+      originalLyrics.push(
+        ts: ts
+        text: "Lyriques quelles sont en Francais ou autre langue et sont tres bien oui? " + i
+      )
+      translatedLyrics.push(
+        ts: ts
+        text: "Test Lyrics in English that are the translation of the other that are a great translation right? " + i
+      )
       
     fn = () ->
-      onSuccess(segments)
+      onSuccess(
+        originalLyrics: originalLyrics
+        translatedLyrics: translatedLyrics
+      )
     setTimeout(fn, 100)
     
 window.TestTranslationDataProvider = TestTranslationDataProvider

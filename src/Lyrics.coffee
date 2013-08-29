@@ -2,21 +2,14 @@ window.LyricsModel = Backbone.Model.extend(
   timer: null
 
   initialize: () ->
-    dataProvider = this.get('dataProvider')
-    musicPlayer = this.get('musicPlayer')
-    language = this.get('language')
+    fn = () ->
+      this.onSongChange()
+    this.listenTo(this, 'change:lyrics', fn)
 
-    onSuccess = (lyrics) =>
-      this.onSongChange(lyrics)
-
-    dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), language, onSuccess)
-
-  onSongChange: (lyrics) ->
-    this.set(
-      lyrics: lyrics
-    )
-
-    this.timer = new LyricsTimer(lyrics, () =>
+  onSongChange: () ->
+    if this.timer?
+      this.timer.clear()
+    this.timer = new LyricsTimer(this.get('lyrics'), () =>
       this.syncView()
       this.startTimer()
     )
@@ -42,7 +35,8 @@ window.LyricsModel = Backbone.Model.extend(
 
   startTimer: () ->
     this.timer.clear()
-    this.timer.start(this.get('i'), this.get('musicPlayer').getTrackPosition())
+    if this.get('musicPlayer').isPlaying()
+      this.timer.start(this.get('i'), this.get('musicPlayer').getTrackPosition())
 
   clearTimer: () ->
     this.timer.clear()
@@ -122,13 +116,14 @@ window.LyricsView = Backbone.View.extend(
     lyricsList = "<% _.each(lyrics, function(lyricLine) { %> <li class='lyricLine'><%= lyricLine.text %></li> <% }); %>"
     this.$el.html(_.template(lyricsList, {lyrics : this.model.get('lyrics')}))
 
+    this.onPositionChange()
+
     return this
 
   # Update the lines shown in the window and the highlighted line
   onPositionChange: () ->
     i = this.model.get('i')
-
-    topMargin = -(i * 60) + 180
+    topMargin = -(i * 48) + 180
     this.$el.css('margin-top', topMargin + 'px')
 
     this.$('.lyricLine').each((index, el) ->
