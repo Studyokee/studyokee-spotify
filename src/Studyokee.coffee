@@ -10,6 +10,26 @@ AppView = Backbone.View.extend(
     this.$('#skee-original').append(this.model.get('originalLyricsView').render().el)
     this.$('#skee-translation').append(this.model.get('translatedLyricsView').render().el)
 
+    this.$('.skee-closeDictionary').on('click', () =>
+      this.model.set(
+        showDictionary: false
+      )
+    )
+    this.listenTo(this.model, 'change:showDictionary', this.toggleDictionary)
+    this.listenTo(this.model, 'change:dictionaryMarkup', this.showLookup)
+
+  toggleDictionary: () ->
+    if this.model.get('showDictionary')
+      this.showDictionary()
+    else
+      this.hideDictionary()
+
+  showLookup: () ->
+    templateModel = 
+      text: this.model.get('dictionaryMarkup')
+    dictionaryMarkup = _.template("<div><%= text %></div>", templateModel)
+    this.$('.skee-dictionaryResults').html(dictionaryMarkup)
+
   enableButtons: () ->
     this.$('.skee-prev').on('click', () =>
       model.prev() for model in this.model.get('lyricsModels'))
@@ -48,7 +68,7 @@ AppView = Backbone.View.extend(
 
   syncPlayButton: () ->
     togglePlayButton = this.$('.skee-togglePlay')
-    if this.model.get('musicPlayer').isPlaying()
+    if not this.model.get('musicPlayer').isPlaying()
       togglePlayButton.removeClass('skee-paused')
     else
       togglePlayButton.addClass('skee-paused')
@@ -72,30 +92,45 @@ AppView = Backbone.View.extend(
         # f or enter
         this.$('.skee-toggleRepeatOne').addClass('active')
         this.toggleRepeatOne()
+      when 27
+        this.hideDictionary()
       else
         console.log(event.keyCode)
 
+  showDictionary: () ->
+    this.$('.skee-dictionaryContainer').show()
+    this.$('.skee-lyricsContainer').hide() 
+
+  hideDictionary: () ->
+    this.$('.skee-dictionaryContainer').hide()
+    this.$('.skee-lyricsContainer').show() 
 )
 AppModel = Backbone.Model.extend(
 
   initialize: () ->
     musicPlayer = new SpotifyPlayer()
-    #dataProvider = new TuneWikiDataProvider()
-    dataProvider = new TestTranslationDataProvider()
+    dataProvider = new TuneWikiDataProvider()
+    #dataProvider = new TestTranslationDataProvider()
 
     lyricsModels = []
 
     originalLyricsModel = new MasterLyricsModel(
       musicPlayer: musicPlayer
+      linkWords: true
     )
     originalLyricsView = new LyricsView(
       model: originalLyricsModel
+    )
+    originalLyricsView.on("lookup", (word) =>
+      musicPlayer.pause()
+      this.lookup(word)
     )
 
     lyricsModels.push(originalLyricsModel)
 
     translatedLyricsModel = new LyricsModel(
       musicPlayer: musicPlayer
+      linkWords: false
     )
     translatedLyricsView = new LyricsView(
       model: translatedLyricsModel
@@ -108,6 +143,8 @@ AppModel = Backbone.Model.extend(
       musicPlayer: musicPlayer
       lyricsModels: [originalLyricsModel, translatedLyricsModel]
       originalLyricsModel: originalLyricsModel
+      dictionaryMarkup: null
+      showDictionary: false
     )
 
     callback = (lyrics) =>
@@ -124,6 +161,19 @@ AppModel = Backbone.Model.extend(
     musicPlayer.onSongChange(() ->
       dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), language, callback)
     )
+
+  lookup: (word) ->
+    this.set(showDictionary: true)
+    onSuccess = (result) =>
+      dictionaryMarkup = eval('(' + result + ')').text
+      this.set(dictionaryMarkup: dictionaryMarkup)
+
+    $.ajax(
+      url: 'http://yabla.com/player_service.php?action=lookup&word=' + word + '&word_lang_id=es&output_lang_id=en'
+      type: 'GET'
+      success: onSuccess
+    )
+
 
 )
 app = new AppModel

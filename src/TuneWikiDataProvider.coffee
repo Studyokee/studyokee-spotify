@@ -19,8 +19,12 @@ class TuneWikiDataProvider
 
     originalLyrics = null
     translatedLyrics = null
+    currentSong = @lastSong
 
     onSuccess = () =>
+      if currentSong is not @lastSong
+        return
+        
       if originalLyrics? and translatedLyrics?
         lyrics =
           originalLyrics: originalLyrics

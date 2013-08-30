@@ -45,10 +45,11 @@ ul {
 	font-size: 14px;
 	padding: 12px;
 }
-.skee-lyrics-container {
+.skee-main {
 	margin-top: 1px;
 	border-bottom: 1px solid #FFF;
 	height: 480px;
+	overflow: hidden;
 }
 .skee-pane {
 	width: 50%;
@@ -77,6 +78,11 @@ ul {
 	line-height: 36px;
 	font-size: 24px;
 	margin-bottom: 20px;
+	color: #FFF;
+}
+.skee-lyrics a:hover {
+	text-decoration: underline;
+	cursor: pointer;
 	color: #FFF;
 }
 .skee-player {
@@ -138,3 +144,31 @@ ul {
 	background-position: -256px 0;
 }
 */
+.skee-main {
+}
+.skee-lyricsContainer {
+}
+.skee-dictionaryContainer {
+	display: none;
+	padding: 24px;
+	font-size: 14px;
+	line-height: 24px;
+	color: #FFF;
+	position: relative;
+}
+.skee-dictionaryContainer p {
+	padding: 0;
+	margin: 0;
+}
+.skee-closeDictionary {
+	position: absolute;
+	top: 4px;
+	right: 8px;
+	color: #999;
+	font-size: 18px;
+	padding: 12px;
+}
+.skee-closeDictionary:hover {
+	color: #FFF;
+	cursor: pointer;
+}
