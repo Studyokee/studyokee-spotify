@@ -1,5 +1,6 @@
 html, body {
-	background-color: #999;
+	margin: 0;
+	background: #262626;
 }
 ul {
 	list-style: none;
@@ -8,44 +9,132 @@ ul {
 .hidden {
 	display: none;
 }
-.skee-pane {
-	width: 49%;
+.skee {
+	min-width: 640px;
+	overflow: hidden;
+	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
+	color: #000;
+}
+.skee-header {
+	padding: 8px 8px 4px 8px;
+	text-align: center;
+	border-top: 2px solid #FFF;
+	border-bottom: 1px solid #FFF;
+}
+.skee-header .skee-title {
 	display: inline-block;
 }
+.skee-header .skee-titleText {
+	background-image: url('img/title3.png');
+	width: 188px;
+	height: 44px;
+	display: inline-block;
+}
+.skee-footer {
+	height: 200px;
+	background-color: #277276;
+}
+.skee-woodTrim {
+	height: 48px;
+	background-image: url('img/wood_trim.png');
+	box-shadow: 0 0 15px #222;
+	border-top: 1px solid #000;
+	border-bottom: 2px solid #000;
+}
+.skee-instructions {
+	font-size: 14px;
+	padding: 12px;
+}
+.skee-lyrics-container {
+	margin-top: 1px;
+	border-bottom: 1px solid #FFF;
+	height: 480px;
+}
+.skee-pane {
+	width: 50%;
+	display: inline-block;
+}
+.skee-original {
+	float: left;
+}
+.skee-translated {
+	float: right;
+}
 .skee-viewport {
-	height: 500px;
+	height: 480px;
 	overflow: hidden;
-	margin: 8px;
-	border: 1px solid #000;
-	background-color: #79B2B5;
-	border-radius: 3px;
-	font-family: Lucida Grande,Lucida Sans Unicode,Arial,sans-serif;
-	text-shadow: none;
+	margin: 0 8px;
 }
 .skee-lyrics li {
 	height: 32px;
-	line-height: 16px;
 	font-size: 14px;
-	padding: 8px;
-	color: #000;
+	padding: 4px 8px 12px 8px;
 	overflow: hidden;
+	color: #999;
 }
 .skee-lyrics li.selected {
 	height: auto;
 	line-height: 36px;
 	font-size: 24px;
-	background-color: #E6E6E6;
-	color: #000;
+	margin-bottom: 20px;
+	color: #FFF;
 }
 .skee-player {
-	text-align: center;
+	margin: 8px 8px 8px 24px;
 }
-.skee-player button {
-	height: 50px;
-	width: 100px;
-	background-color: #E6E6E6;
+.skee-control {
+	height: 32px;
+	width: 80px;
+	display: inline-block;
+	border-radius: 3px;
+	box-shadow: 0 0 10px #000;
+	background-color: #A63A37;
 	border: 1px solid #000;
+	margin: 0 8px;
+	text-decoration: none;
 }
-.skee-player button.selected {
-	color: #79B2B5;
+.skee-control:active, .skee-control.active {
+	background-color: #56211B;
 }
+.skee-control:active .skee-icon, .skee-control.active .skee-icon {
+	margin-top: 1px;
+}
+.skee-control .skee-icon {
+	height: 32px;
+	width: 32px;
+	background-image: url('img/player_sprite.png');
+	margin: 0 auto;
+}
+.skee-prev .skee-icon {
+	background-position: 0 0;
+}
+.skee-togglePlay .skee-icon {
+	background-position: -64px 0;
+}
+.skee-togglePlay.skee-paused .skee-icon {
+	background-position: -32px 0;
+}
+.skee-next .skee-icon {
+	background-position: -96px 0;
+}
+.skee-toggleRepeatOne .skee-icon {
+	background-position: -128px 0;
+}
+.skee-toggleRepeatOne.selected .skee-icon {
+	background-position: -288px 0;
+}
+/*
+
+.skee-prev:active .skee-icon {
+	background-position: -160px 0;
+}
+.skee-togglePlay:active .skee-icon {
+	background-position: -224px 0;
+}
+.skee-togglePlay.skee-paused:active .skee-icon {
+	background-position: -192px 0;
+}
+.skee-next:active .skee-icon {
+	background-position: -256px 0;
+}
+*/
