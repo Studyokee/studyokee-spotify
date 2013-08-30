@@ -4,29 +4,30 @@ AppView = Backbone.View.extend(
   el: $("#skee")
   
   initialize: () ->
-    this.$('#skee-original').append(this.model.get('originalLyricsView').render().el)
-    this.$('#skee-translation').append(this.model.get('translatedLyricsView').render().el)
-
-    # Add controls
     this.enableButtons()
     this.enableKeyboard()
 
+    this.$('#skee-original').append(this.model.get('originalLyricsView').render().el)
+    this.$('#skee-translation').append(this.model.get('translatedLyricsView').render().el)
+
   enableButtons: () ->
-    this.$('#skee-prev').on('click', () =>
+    this.$('.skee-prev').on('click', () =>
       model.prev() for model in this.model.get('lyricsModels'))
-    this.$('#skee-next').on('click', () =>
+    this.$('.skee-next').on('click', () =>
       model.next() for model in this.model.get('lyricsModels'))
 
-    this.$('#skee-togglePlay').on('click', () =>
+    this.$('.skee-togglePlay').on('click', () =>
       this.togglePlay())
     this.syncPlayButton()
 
-    this.$('#skee-toggleRepeatOne').on('click', () =>
+    this.$('.skee-toggleRepeatOne').on('click', () =>
       this.toggleRepeatOne())
 
   enableKeyboard: () ->
-    window.onkeypress = (event) =>
+    window.onkeydown = (event) =>
       this.handleKeyEvents(event)
+    window.onkeyup = (event) =>
+      this.$('.skee-control').removeClass('active')
 
   togglePlay: () ->
     if this.model.get('musicPlayer').isPlaying()
@@ -37,7 +38,7 @@ AppView = Backbone.View.extend(
     this.syncPlayButton()
 
   toggleRepeatOne: () ->
-    repeatOneButton = this.$('#skee-toggleRepeatOne')
+    repeatOneButton = this.$('.skee-toggleRepeatOne')
     if repeatOneButton.hasClass('selected')
       repeatOneButton.removeClass('selected')
       this.model.get('originalLyricsModel').removeRepeatone()
@@ -46,22 +47,30 @@ AppView = Backbone.View.extend(
       this.model.get('originalLyricsModel').addRepeatone()
 
   syncPlayButton: () ->
-    text = if this.model.get('musicPlayer').isPlaying() then 'pause' else 'play'
-    this.$('#skee-togglePlay').html(text)
+    togglePlayButton = this.$('.skee-togglePlay')
+    if this.model.get('musicPlayer').isPlaying()
+      togglePlayButton.removeClass('skee-paused')
+    else
+      togglePlayButton.addClass('skee-paused')
 
   handleKeyEvents: (event) ->
     switch event.keyCode
-      when 97
-        # a (left arrow)
+      when 65, 37
+        # a or left arrow
+        this.$('.skee-prev').addClass('active')
         model.prev() for model in this.model.get('lyricsModels')
-      when 100
-        # d (right arrow)
-        model.next() for model in this.model.get('lyricsModels')
-      when 115
-        # s (down arrow)
+      when 83, 32
+        # s or space
+        this.$('.skee-togglePlay').addClass('active')
         this.togglePlay()
-      when 102
-        # f 
+        event.preventDefault()
+      when 68, 39
+        # d or right arrow
+        this.$('.skee-next').addClass('active')
+        model.next() for model in this.model.get('lyricsModels')
+      when 70, 13
+        # f or enter
+        this.$('.skee-toggleRepeatOne').addClass('active')
         this.toggleRepeatOne()
       else
         console.log(event.keyCode)
