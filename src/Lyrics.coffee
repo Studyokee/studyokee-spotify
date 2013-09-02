@@ -129,7 +129,7 @@ window.LyricsView = Backbone.View.extend(
     this.$('.lyricLine').each((index, el) ->
       if index is i
         $(el).addClass('selected')
-      else 
+      else
         $(el).removeClass('selected')
     )
 )

@@ -22,7 +22,7 @@ class TuneWikiDataProvider
 
     onSuccess = () =>
       if originalLyrics? and translatedLyrics?
-        lyrics = 
+        lyrics =
           originalLyrics: originalLyrics
           translatedLyrics: translatedLyrics
 
@@ -46,14 +46,21 @@ class TuneWikiDataProvider
       onSuccess()
 
     $.ajax(
-      url: 'http://localhost:3000/lyrics?artist=' + artist + '&song=' + song
       type: 'GET'
+      url: 'http://localhost:3000/lyrics',
+      data:
+        artist: artist
+        song: song
       success: onSuccessOriginal
     )
 
     $.ajax(
-      url: 'http://localhost:3000/lyrics?artist=' + artist + '&song=' + song + '&language=' + language
       type: 'GET'
+      url: 'http://localhost:3000/lyrics'
+      data:
+        artist: artist
+        song: song
+        language: language
       success: onSuccessTranslated
     )
 
