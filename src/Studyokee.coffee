@@ -42,7 +42,7 @@ AppView = Backbone.View.extend(
     if repeatOneButton.hasClass('selected')
       repeatOneButton.removeClass('selected')
       this.model.get('originalLyricsModel').removeRepeatone()
-    else 
+    else
       repeatOneButton.addClass('selected')
       this.model.get('originalLyricsModel').addRepeatone()
 
