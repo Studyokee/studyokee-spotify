@@ -46,13 +46,13 @@ class TuneWikiDataProvider
       onSuccess()
 
     $.ajax(
-      url: 'http://localhost:3000/lyrics?artist=' + artist + '&song=' + song
+      url: 'http://tunewiki-proxy.herokuapp.com/lyrics?artist=' + artist + '&song=' + song
       type: 'GET'
       success: onSuccessOriginal
     )
 
     $.ajax(
-      url: 'http://localhost:3000/lyrics?artist=' + artist + '&song=' + song + '&language=' + language
+      url: 'http://tunewiki-proxy.herokuapp.com/lyrics?artist=' + artist + '&song=' + song + '&language=' + language
       type: 'GET'
       success: onSuccessTranslated
     )
