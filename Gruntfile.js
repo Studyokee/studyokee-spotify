@@ -20,7 +20,16 @@ module.exports = function (grunt) {
             }
         },
         coffeelint: {
-            app: ['**/*.coffee','!node_modules/**/*']
+            app: {
+                files: {
+                    src: ['**/*.coffee','!node_modules/**/*']
+                },
+                options: {
+                    max_line_length: {
+                        level: 'warn'
+                    }
+                }
+            }
         }
     });
 

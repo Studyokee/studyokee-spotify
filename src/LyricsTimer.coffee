@@ -1,5 +1,5 @@
 ####################################################################
-# 
+#
 # LyricsTimer.coffee
 #
 # Given an array of lyrics objects with a "ts" field, notifies
@@ -17,9 +17,9 @@ class LyricsTimer
     i = 0
     while lyricsSegments[i]
       if not lyricsSegments[i].ts?
-        throw "no timestamp"
+        throw new Error "no timestamp"
       if i > 0 and lyricsSegments[i].ts <= @timestamps[i - 1]
-        throw "timestamp not greater than previous"
+        throw new Error "timestamp not greater than previous"
 
       @timestamps.push(lyricsSegments[i].ts)
       i++
