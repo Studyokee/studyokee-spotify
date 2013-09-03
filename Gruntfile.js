@@ -6,11 +6,22 @@ module.exports = function (grunt) {
     grunt.initConfig({
         watch: {
             coffee: {
-                files: ['src/*.coffee'],
-                tasks: ['coffeelint', 'coffee']
+                files: [
+                    'src/*.coffee'
+                ],
+                tasks: [
+                    'coffeelint',
+                    'coffee'
+                ]
             },
             lib: {
-                files: ['lib/*.js'],
+                files: [
+                    '**/*.js',
+                    '**/*.css',
+                    '**/*.html',
+                    '!node_modules/**/*',
+                    '!components/**/*'
+                ],
                 options: {
                     livereload: true
                 }
@@ -32,7 +43,11 @@ module.exports = function (grunt) {
         coffeelint: {
             app: {
                 files: {
-                    src: ['**/*.coffee','!node_modules/**/*']
+                    src: [
+                        '**/*.coffee',
+                        '!components/**/*', 
+                        '!node_modules/**/*'
+                    ]
                 },
                 options: {
                     max_line_length: {
