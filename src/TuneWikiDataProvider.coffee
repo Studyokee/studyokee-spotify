@@ -47,7 +47,7 @@ class TuneWikiDataProvider
 
     $.ajax(
       type: 'GET'
-      url: 'http://localhost:3000/lyrics',
+      url: 'http://tunewiki-proxy.herokuapp.com/lyrics',
       data:
         artist: artist
         song: song
@@ -56,7 +56,7 @@ class TuneWikiDataProvider
 
     $.ajax(
       type: 'GET'
-      url: 'http://localhost:3000/lyrics'
+      url: 'http://tunewiki-proxy.herokuapp.com/lyrics'
       data:
         artist: artist
         song: song
