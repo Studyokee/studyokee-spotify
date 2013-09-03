@@ -8,6 +8,12 @@ module.exports = function (grunt) {
             coffee: {
                 files: ['src/*.coffee'],
                 tasks: ['coffeelint', 'coffee']
+            },
+            lib: {
+                files: ['lib/*.js'],
+                options: {
+                    livereload: true
+                }
             }
         },
         coffee: {
@@ -16,7 +22,11 @@ module.exports = function (grunt) {
                 dest: 'lib/',
                 ext: '.js',
                 expand: true,
-                flatten: true
+                flatten: true,
+                options: {
+                    runtime: 'inline',
+                    sourceMap: true
+                }
             }
         },
         coffeelint: {
