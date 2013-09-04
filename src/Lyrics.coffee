@@ -117,7 +117,6 @@ window.LyricsView = Backbone.View.extend(
     if not lyrics?
       return this
 
-    console.log('linkwords: ' + this.model.get('linkWords'))
     if this.model.get('linkWords')
       this.renderWithLinkedWords()
     else
@@ -137,29 +136,19 @@ window.LyricsView = Backbone.View.extend(
     for line in lyrics
       lyricsAsSegments.push(line.text.split(' '))
 
-    linkWords = _.template("<% _.each(lyricLine, function(word) { %><a class='skee-lookup'><%= word %></a> <% }); %>")
-    lyricsList = "<% _.each(lyricsAsSegments, function(lyricLine) { %>" +
-                    "<li class='lyricLine'>" + 
-                      "<%= linkWords({lyricLine:lyricLine}) %>" +
-                    "</li>" +
-                 "<% }); %>"
+    linkedLyricsTemplate = $( "script.linkedLyrics" ).html()
 
-    templateModel = 
+    templateModel =
       lyricsAsSegments : lyricsAsSegments
-      linkWords: linkWords
-    this.$el.html(_.template(lyricsList, templateModel))
+    this.$el.html(_.template(linkedLyricsTemplate, templateModel))
 
   renderWithoutLinkedWords: () ->
     lyrics = this.model.get('lyrics')
-    lyricsList = "<% _.each(lyrics, function(lyricLine) { %>" +
-                    "<li class='lyricLine'>" + 
-                      "<%= lyricLine.text %>" +
-                    "</li>" +
-                 "<% }); %>"
+    lyricsTemplate = $( "script.lyrics" ).html()
 
-    templateModel = 
+    templateModel =
       lyrics : lyrics
-    this.$el.html(_.template(lyricsList, templateModel))
+    this.$el.html(_.template(lyricsTemplate, templateModel))
 
   # Update the lines shown in the window and the highlighted line
   onPositionChange: () ->
