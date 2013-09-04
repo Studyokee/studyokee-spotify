@@ -11,24 +11,59 @@
         <script type="text/javascript" src="/lib/TuneWikiDataProvider.js"/></script>
         <script type="text/javascript" src="/lib/SpotifyPlayer.js"/></script>
         <script type="text/javascript" src="/lib/LyricsTimer.js"/></script>
+        <script type="text/javascript" src="/lib/LyricsPlayer.js"/></script>
+        <script type="text/javascript" src="/lib/Lyrics.js"/></script>
+        <script type="text/javascript" src="/lib/DictionaryDataProvider.js"/></script>
     </head>
     <body>
-
+                                        
         <div class="skee" id="skee">
             <div class="skee-header">
                 <div class="skee-title">
                     <span class="skee-titleText"></span>
                 </div>
             </div>
-            <div class="skee-lyrics-container">
-                <div class="skee-pane skee-original">
-                    <div class="skee-viewport" id="skee-original"></div>
-                </div>
-                <div class="skee-pane skee-translation">
-                    <div class="skee-viewport" id="skee-translation"></div>
+            <div class="skee-main"></div>
+            <div class="skee-footer">
+                <div class="skee-instructions">
+                    a/←: Prev, s/_: Play/Pause, d/→: Next, f/↲: Repeat
                 </div>
             </div>
-            <div class="skee-player" id="skee-player">
+        </div>
+
+        <!-- Templates -->
+        <script type="text/template" class="spinner">
+            <div class='skee-spinner'></div>
+        </script>
+
+        <script type="text/template" class="linkedLyrics">
+            <% _.each(lyricsAsSegments, function(lyricLine) { %>
+                <li class='lyricLine'>
+                    <% _.each(lyricLine, function(word) { %>
+                        <a class='skee-lookup'><%= word %></a>
+                    <% }); %>
+                </li>
+             <% }); %>
+        </script>
+
+        <script type="text/template" class="lyrics">
+            <% _.each(lyrics, function(lyricLine) { %>
+                <li class='lyricLine'>
+                  <%= lyricLine.text %>
+                </li>
+            <% }); %>
+        </script>
+
+        <script type="text/template" class="lyricsPlayer">
+            <div class="skee-lyricsContainer">
+                <div class="skee-pane skee-originalLyrics">
+                    <div class="skee-viewport"></div>
+                </div>
+                <div class="skee-pane skee-translatedLyrics">
+                    <div class="skee-viewport"></div>
+                </div>
+            </div>
+            <div class="skee-controls">
                 <a class="skee-prev skee-control">
                     <div class="skee-icon"></div>
                 </a>
@@ -42,15 +77,13 @@
                     <div class="skee-icon"></div>
                 </a>
             </div>
-            <div class="skee-footer">
-                <div class="skee-woodTrim"></div>
-                <div class="skee-instructions">
-                    a/←: Prev, s/_: Play/Pause, d/→: Next, f/↲: Repeat
-                </div>
+            <div class="skee-dictionaryContainer">
+                <a class="skee-closeDictionary">×</a>
+                <div class="skee-dictionaryResults"></div>
             </div>
-        </div>
+        </script>
+        <!-- End Templates -->
 
-        <script type="text/javascript" src="/lib/Lyrics.js"/></script>
         <script type="text/javascript" src="/lib/Studyokee.js"/></script>
         <script src="http://localhost:35729/livereload.js"></script>
     </body>
