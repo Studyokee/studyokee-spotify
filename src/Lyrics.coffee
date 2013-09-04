@@ -113,12 +113,42 @@ window.LyricsView = Backbone.View.extend(
     this.listenTo(this.model, 'change:i', this.onPositionChange)
 
   render: () ->
-    lyricsList = "<% _.each(lyrics, function(lyricLine) { %> <li class='lyricLine'><%= lyricLine.text %></li> <% }); %>"
-    this.$el.html(_.template(lyricsList, {lyrics : this.model.get('lyrics')}))
+    lyrics = this.model.get('lyrics')
+    if not lyrics?
+      return this
+
+    if this.model.get('linkWords')
+      this.renderWithLinkedWords()
+    else
+      this.renderWithoutLinkedWords()
 
     this.onPositionChange()
 
+    this.$('.skee-lookup').on('click', (event) =>
+      this.trigger('lookup', event.target.innerHTML)
+    )
+
     return this
+
+  renderWithLinkedWords: () ->
+    lyrics = this.model.get('lyrics')
+    lyricsAsSegments = []
+    for line in lyrics
+      lyricsAsSegments.push(line.text.split(' '))
+
+    linkedLyricsTemplate = $( "script.linkedLyrics" ).html()
+
+    templateModel =
+      lyricsAsSegments : lyricsAsSegments
+    this.$el.html(_.template(linkedLyricsTemplate, templateModel))
+
+  renderWithoutLinkedWords: () ->
+    lyrics = this.model.get('lyrics')
+    lyricsTemplate = $( "script.lyrics" ).html()
+
+    templateModel =
+      lyrics : lyrics
+    this.$el.html(_.template(lyricsTemplate, templateModel))
 
   # Update the lines shown in the window and the highlighted line
   onPositionChange: () ->
