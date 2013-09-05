@@ -5,6 +5,7 @@
     "jquery": "~2.0.2",
     "angular": "~1.0.7",
     "backbone": "~1.0.0",
-    "underscore": "~1.5.1"
+    "underscore": "~1.5.1",
+    "requirejs": "~2.1.8"
   }
 }
