@@ -19,12 +19,13 @@ define [
       @timestamps = []
       i = 0
       while lyricsSegments[i]
-        if not lyricsSegments[i].ts?
+        ts = parseInt(lyricsSegments[i].ts)
+        if not ts?
           throw new Error "no timestamp"
-        if i > 0 and lyricsSegments[i].ts <= @timestamps[i - 1]
+        if i > 0 and ts <= @timestamps[i - 1]
           throw new Error "timestamp not greater than previous"
 
-        @timestamps.push(lyricsSegments[i].ts)
+        @timestamps.push(ts)
         i++
 
       @callback = callback
@@ -58,26 +59,22 @@ define [
     timer: null
 
     initialize: () ->
-      fn = () ->
-        this.onSongChange()
-      this.listenTo(this, 'change:lyrics', fn)
+      lyrics = this.get('lyrics')
+      if not lyrics?
+        return
 
-    onSongChange: () ->
-      if this.timer?
-        this.timer.clear()
-      this.timer = new LyricsTimer(this.get('lyrics'), () =>
+      this.timer = new LyricsTimer(lyrics, () =>
         this.syncView()
-        this.startTimer()
       )
 
       this.syncView()
-      this.startTimer()
 
     # Matches the view to the song playing
     syncView: () ->
       this.set(
         i: this.getPosition()
       )
+      this.startTimer()
 
     # Get the index of the line of lyrics corresponding to the current track position
     getPosition: () ->
@@ -164,7 +161,6 @@ define [
     removeRepeatone: () ->
       this.timer.setCallback(() =>
         this.syncView()
-        this.startTimer()
       )
   )
 
@@ -176,32 +172,39 @@ define [
   #
   ####################################################################
   LyricsScrollerView = Backbone.View.extend(
-    tagName:  "ul"
-    className: "skee-lyrics"
-
-    initialize: () ->
-      this.listenTo(this.model, 'change:lyrics', this.render)
-      this.listenTo(this.model, 'change:i', this.onPositionChange)
+    tagName:  "div"
+    className: "skee-pane"
 
     render: () ->
+      this.$el.html(_.template($( "script.lyricsScroller" ).html()))
+
       lyrics = this.model.get('lyrics')
-      if not lyrics?
+      if not lyrics? or lyrics.length == 0
+        noLyrics = this.showNoLyricsMessage()
+        this.$('.skee-viewport').html(noLyrics)
         return this
 
       if this.model.get('linkWords')
-        this.renderWithLinkedWords()
+        items = this.getLinkedWordsMarkup()
       else
-        this.renderWithoutLinkedWords()
+        items = this.getWithoutLinkedWordsMarkup()
+
+      this.$('.skee-viewport').html(items)
 
       this.onPositionChange()
+      this.listenTo(this.model, 'change:i', () =>
+        this.onPositionChange()
+      )
 
       this.$('.skee-lookup').on('click', (event) =>
         this.trigger('lookup', event.target.innerHTML)
       )
-
       return this
 
-    renderWithLinkedWords: () ->
+    showNoLyricsMessage: () ->
+      return _.template($( "script.noLyrics" ).html())
+
+    getLinkedWordsMarkup: () ->
       lyrics = this.model.get('lyrics')
       lyricsAsSegments = []
       for line in lyrics
@@ -211,23 +214,26 @@ define [
 
       templateModel =
         lyricsAsSegments : lyricsAsSegments
-      this.$el.html(_.template(linkedLyricsTemplate, templateModel))
+      return _.template(linkedLyricsTemplate, templateModel)
 
-    renderWithoutLinkedWords: () ->
+    getWithoutLinkedWordsMarkup: () ->
       lyrics = this.model.get('lyrics')
       lyricsTemplate = $( "script.lyrics" ).html()
 
       templateModel =
         lyrics : lyrics
-      this.$el.html(_.template(lyricsTemplate, templateModel))
+      return _.template(lyricsTemplate, templateModel)
 
     # Update the lines shown in the window and the highlighted line
     onPositionChange: () ->
       i = this.model.get('i')
-      topMargin = -(i * 48) + 180
-      this.$el.css('margin-top', topMargin + 'px')
+      if not i?
+        return
 
-      this.$('.lyricLine').each((index, el) ->
+      topMargin = -(i * 32) + 180
+      this.$('.skee-lyrics').css('margin-top', topMargin + 'px')
+
+      this.$('.skee-lyricLine').each((index, el) ->
         if index is i
           $(el).addClass('selected')
         else
@@ -246,50 +252,35 @@ define [
   LyricsPlayerModel = Backbone.Model.extend(
 
     initialize: () ->
+      this.updateLyrics()
+
+      musicPlayer = this.get('musicPlayer')
+      musicPlayer.onSongChange(() =>
+        this.updateLyrics()
+      )
+
+    updateLyrics: () ->
       musicPlayer = this.get('musicPlayer')
       dataProvider = this.get('dataProvider')
 
-      lyricsModels = []
+      artist = musicPlayer.getArtist()
+      song = musicPlayer.getSong()
+      language = this.get('toLanguage')
 
-      originalLyricsModel = new MasterLyricsScrollerModel(
-        musicPlayer: musicPlayer
-        linkWords: true
-      )
-      lyricsModels.push(originalLyricsModel)
-
-      translatedLyricsModel = new LyricsScrollerModel(
-        musicPlayer: musicPlayer
-        linkWords: false
-      )
-      lyricsModels.push(translatedLyricsModel)
-
-      originalLyricsView = new LyricsScrollerView(
-        model: originalLyricsModel
-      )
-      translatedLyricsView = new LyricsScrollerView(
-        model: translatedLyricsModel
-      )
-
-      this.set(
-        lyricsModels: [originalLyricsModel, translatedLyricsModel]
-        originalLyricsModel: originalLyricsModel
-        originalLyricsView: originalLyricsView
-        translatedLyricsView: translatedLyricsView
-      )
+      @lastCallbackId = lastCallbackId = artist + ':' + song + ':' + language
 
       callback = (lyrics) =>
-        originalLyricsModel.set(
-          lyrics: lyrics.originalLyrics
-        )
-        translatedLyricsModel.set(
-          lyrics: lyrics.translatedLyrics
-        )
+        if @lastCallbackId is lastCallbackId
+          this.set(
+            lyrics: lyrics
+            isLoading: false
+          )
 
-      dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), this.get('toLanguage'), callback)
-
-      musicPlayer.onSongChange(() =>
-        dataProvider.getSegments(musicPlayer.getArtist(), musicPlayer.getSong(), this.get('toLanguage'), callback)
+      this.set(
+        lyrics: {}
+        isLoading: true
       )
+      dataProvider.getSegments(artist, song, language, callback)
   )
 
   ####################################################################
@@ -305,22 +296,72 @@ define [
     className: "skee-lyricsPlayer"
     
     initialize: () ->
-      this.model.get('originalLyricsView').on("lookup", (word) =>
-        this.lookup(word)
+      this.listenTo(this.model, 'change:lyrics', () ->
+        this.showLyrics()
+      )
+      this.listenTo(this.model, 'change:isLoading', () ->
+        if this.model.get('isLoading')
+          this.showSpinner()
+      )
+      this.model.get('musicPlayer').onChange(() =>
+        this.syncPlayButton()
       )
 
     render: () ->
       this.$el.html(_.template($( "script.lyricsPlayer" ).html()))
-
-      originalLyrics = this.model.get('originalLyricsView').render().el
-      this.$('.skee-originalLyrics .skee-viewport').append(originalLyrics)
-      translatedLyrics = this.model.get('translatedLyricsView').render().el
-      this.$('.skee-translatedLyrics .skee-viewport').append(translatedLyrics)
+      this.showSpinner()
 
       this.enableButtons()
       this.enableKeyboard()
 
       return this
+
+    showSpinner: () ->
+      spinner = _.template($( "script.spinner" ).html())
+      this.$('.skee-lyricsContainer').html(spinner)
+
+    showLyrics: () ->
+
+      lyrics = this.model.get('lyrics')
+      musicPlayer = this.model.get('musicPlayer')
+
+      lyricsModels = []
+      this.$('.skee-lyricsContainer').html('')
+
+      # show original lyrics
+      originalLyricsModel = new MasterLyricsScrollerModel(
+        lyrics: lyrics.originalLyrics
+        musicPlayer: musicPlayer
+        linkWords: true
+      )
+      lyricsModels.push(originalLyricsModel)
+      originalLyricsView = new LyricsScrollerView(
+        model: originalLyricsModel
+      )
+      originalLyrics = originalLyricsView.render().$el
+      originalLyrics.addClass('skee-originalLyrics')
+      this.$('.skee-lyricsContainer').append(originalLyrics[0])
+      originalLyricsView.on("lookup", (word) =>
+        this.lookup(word)
+      )
+
+      # show translated lyrics
+      translatedLyricsModel = new LyricsScrollerModel(
+        lyrics: lyrics.translatedLyrics
+        musicPlayer: musicPlayer
+        linkWords: false
+      )
+      lyricsModels.push(translatedLyricsModel)
+      translatedLyricsView = new LyricsScrollerView(
+        model: translatedLyricsModel
+      )
+      translatedLyrics = translatedLyricsView.render().$el
+      translatedLyrics.addClass('skee-translatedLyrics')
+      this.$('.skee-lyricsContainer').append(translatedLyrics[0])
+
+      this.model.set(
+        lyricsModels: [originalLyricsModel, translatedLyricsModel]
+      )
 
     enableButtons: () ->
       this.$('.skee-prev').on('click', () =>

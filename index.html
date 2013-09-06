@@ -16,45 +16,48 @@
                 </div>
             </div>
             <div class="skee-main"></div>
-            <div class="skee-footer">
-                <div class="skee-instructions">
-                    a/←: Prev, s/_: Play/Pause, d/→: Next, f/↲: Repeat
-                </div>
-            </div>
         </div>
 
         <!-- Templates -->
         <script type="text/template" class="spinner">
-            <div class='skee-spinner'></div>
+            <div class='skee-spinnerContainer'>
+                <div class='skee-spinner'></div>
+            </div>
+        </script>
+
+        <script type="text/template" class="lyricsScroller">
+            <div class="skee-viewport">
+            </div>
         </script>
 
         <script type="text/template" class="linkedLyrics">
-            <% _.each(lyricsAsSegments, function(lyricLine) { %>
-                <li class='lyricLine'>
-                    <% _.each(lyricLine, function(word) { %>
-                        <a class='skee-lookup'><%= word %></a>
-                    <% }); %>
-                </li>
-             <% }); %>
+            <ul class='skee-lyrics'>
+                <% _.each(lyricsAsSegments, function(lyricLine) { %>
+                    <li class='skee-lyricLine'>
+                        <% _.each(lyricLine, function(word) { %>
+                            <a class='skee-lookup'><%= word %></a>
+                        <% }); %>
+                    </li>
+                <% }); %>
+            </ul>
         </script>
 
         <script type="text/template" class="lyrics">
-            <% _.each(lyrics, function(lyricLine) { %>
-                <li class='lyricLine'>
-                  <%= lyricLine.text %>
-                </li>
-            <% }); %>
+            <ul class='skee-lyrics'>
+                <% _.each(lyrics, function(lyricLine) { %>
+                    <li class='skee-lyricLine'>
+                      <%= lyricLine.text %>
+                    </li>
+                <% }); %>
+            </ul>
+        </script>
+
+        <script type="text/template" class="noLyrics">
+            <div class="skee-noLyrics">Sorry, there are no lyrics for this song in this language</div>
         </script>
 
         <script type="text/template" class="lyricsPlayer">
-            <div class="skee-lyricsContainer">
-                <div class="skee-pane skee-originalLyrics">
-                    <div class="skee-viewport"></div>
-                </div>
-                <div class="skee-pane skee-translatedLyrics">
-                    <div class="skee-viewport"></div>
-                </div>
-            </div>
+            <div class="skee-lyricsContainer"></div>
             <div class="skee-controls">
                 <a class="skee-prev skee-control">
                     <div class="skee-icon"></div>
@@ -72,6 +75,9 @@
             <div class="skee-dictionaryContainer">
                 <a class="skee-closeDictionary">×</a>
                 <div class="skee-dictionaryResults"></div>
+            </div>
+            <div class="skee-instructions">
+                a/←: Prev, s/_: Play/Pause, d/→: Next, f/↲: Repeat
             </div>
         </script>
         <!-- End Templates -->
