@@ -4,7 +4,7 @@ requirejs.config(
     backbone: '/components/backbone/backbone'
     jquery: '/components/jquery/jquery'
     underscore: '/components/underscore/underscore'
-    lyrics: '/lib/lyrics-temp'
+    lyrics: '/lib/lyrics'
     'spotify.player': '/lib/spotify-player'
     'test.translation.data.provider': '/lib/test-translation-data-provider'
     'tune.wiki.translation.data.provider': '/lib/tune-wiki-translation-data-provider'

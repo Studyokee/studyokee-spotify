@@ -10,15 +10,15 @@ require [
 
     initialize: () ->
       musicPlayer = new SpotifyPlayer()
-      #dataProvider = new TuneWikiTranslationDataProvider()
-      dataProvider = new TestTranslationDataProvider()
+      dataProvider = new TuneWikiTranslationDataProvider()
+      #dataProvider = new TestTranslationDataProvider()
       dictionary = new YablaDictionaryDataProvider()
 
       lyricsPlayerModel = new Lyrics.model(
         dataProvider: dataProvider
         musicPlayer: musicPlayer
         dictionary: dictionary
-        fromLanguage: 'fr'
+        fromLanguage: 'es'
         toLanguage: 'en'
       )
       lyricsPlayerView = new Lyrics.view(

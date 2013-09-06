@@ -52,7 +52,7 @@ define () ->
 
       $.ajax(
         type: 'GET'
-        url: 'http://tunewiki-proxy.herokuapp.com/lyrics',
+        url: 'http://d378swyygivki.cloudfront.net/lyrics',
         data:
           artist: artist
           song: song
@@ -61,7 +61,7 @@ define () ->
 
       $.ajax(
         type: 'GET'
-        url: 'http://tunewiki-proxy.herokuapp.com/lyrics'
+        url: 'http://d378swyygivki.cloudfront.net/lyrics'
         data:
           artist: artist
           song: song
@@ -91,7 +91,6 @@ define () ->
 
       for i in [-10...10]
         avgDiff = this.compareWordCounts(lyrics.originalLyrics, lyrics.translatedLyrics, i)
-        console.log(avgDiff)
 
         if not minDiff?
           minDiff = avgDiff
