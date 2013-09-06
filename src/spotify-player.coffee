@@ -13,7 +13,7 @@ define () ->
     constructor: () ->
       @models = getSpotifyApi().require("$api/models")
       @player = @models.player
-
+      
     getTrackPosition: () ->
       return @player.position
 
@@ -36,6 +36,14 @@ define () ->
       return @player.track.artists[0].name
 
     onSongChange: (callback) ->
+      @currentSong = @player.track
+      fn = () =>
+        if @player.track.toString() isnt @currentSong.toString()
+          @currentSong = @player.track
+          callback()
+      @player.observe(@models.EVENT.CHANGE, fn)
+
+    onChange: (callback) ->
       @player.observe(@models.EVENT.CHANGE, callback)
 
   return SpotifyPlayer

@@ -25,21 +25,14 @@ ul {
 	display: inline-block;
 }
 .skee-header .skee-titleText {
-	background-image: url('img/title3.png');
+	background-image: url('img/title4.png');
 	width: 188px;
 	height: 44px;
 	display: inline-block;
 }
-.skee-woodTrim {
-	height: 48px;
-	background-image: url('img/wood_trim.png');
-	box-shadow: 0 0 15px #222;
-	border-top: 1px solid #000;
-	border-bottom: 2px solid #000;
-}
 .skee-instructions {
 	font-size: 14px;
-	padding: 0 12px;
+	padding: 12px;
 	color: #999;
 }
 .skee-main {
@@ -49,6 +42,7 @@ ul {
 .skee-pane {
 	width: 50%;
 	display: inline-block;
+	position: relative;
 }
 .skee-originalLyrics {
 	float: left;
@@ -59,18 +53,22 @@ ul {
 .skee-viewport {
 	height: 480px;
 	overflow: hidden;
-	margin: 0 8px;
+}
+.skee-lyricsPlayer {
+	color: #999;
 }
 .skee-lyricsContainer {
 	height: 480px;
+	padding: 0 16px;
 	border-bottom: 1px solid #FFF;
+}
+.skee-noLyrics {
+	margin-top: 16px;
 }
 .skee-lyrics li {
 	height: 32px;
 	font-size: 14px;
-	padding: 4px 8px 12px 8px;
 	overflow: hidden;
-	color: #999;
 }
 .skee-lyrics li.selected {
 	height: auto;
@@ -92,7 +90,7 @@ ul {
 	width: 80px;
 	display: inline-block;
 	border-radius: 3px;
-	box-shadow: 0 0 10px #000;
+	box-shadow: 0 0 1px #000;
 	background-color: #A63A37;
 	border: 1px solid #000;
 	margin: 0 8px;
@@ -123,29 +121,14 @@ ul {
 	background-position: -96px 0;
 }
 .skee-toggleRepeatOne .skee-icon {
-	background-position: -128px 0;
+	background-image: url('img/repeat.png');
+	background-size: 32px 32px;
 }
-.skee-toggleRepeatOne.selected .skee-icon {
-	background-position: -288px 0;
+.skee-toggleRepeatOne.selected {
+	background-color: #56211B;
 }
-/*
-
-.skee-prev:active .skee-icon {
-	background-position: -160px 0;
-}
-.skee-togglePlay:active .skee-icon {
-	background-position: -224px 0;
-}
-.skee-togglePlay.skee-paused:active .skee-icon {
-	background-position: -192px 0;
-}
-.skee-next:active .skee-icon {
-	background-position: -256px 0;
-}
-*/
 .skee-lyricsPlayer {
 	position: relative;
-	padding-bottom: 16px;
 }
 .skee-dictionaryContainer {
 	display: none;
@@ -187,6 +170,14 @@ ul {
 	max-height: 400px;
 	overflow: auto;
 }
+.skee-spinnerContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 100;
+	height: 100%;
+	width: 100%;
+}
 .skee-spinner {
 	height: 30px;
 	width: 30px;
@@ -199,4 +190,7 @@ ul {
 @-webkit-keyframes spin {
 	from {background-position:0px 0;}
 	to {background-position:-330px 0;}
+}
+.skee-lyricsContainer .skee-spinner {
+	margin-top: 128px;
 }

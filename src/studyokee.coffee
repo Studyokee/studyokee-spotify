@@ -18,7 +18,7 @@ require [
         dataProvider: dataProvider
         musicPlayer: musicPlayer
         dictionary: dictionary
-        fromLanguage: 'fr'
+        fromLanguage: 'es'
         toLanguage: 'en'
       )
       lyricsPlayerView = new Lyrics.view(

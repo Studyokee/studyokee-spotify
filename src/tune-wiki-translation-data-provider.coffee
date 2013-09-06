@@ -91,7 +91,6 @@ define () ->
 
       for i in [-10...10]
         avgDiff = this.compareWordCounts(lyrics.originalLyrics, lyrics.translatedLyrics, i)
-        console.log(avgDiff)
 
         if not minDiff?
           minDiff = avgDiff
