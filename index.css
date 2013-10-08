@@ -1,3 +1,4 @@
+/* Studyokee Main */
 html, body {
 	margin: 0;
 	background: #262626;
@@ -39,48 +40,48 @@ ul {
 	margin-top: 1px;
 	overflow: hidden;
 }
-.skee-pane {
-	width: 50%;
-	display: inline-block;
-	position: relative;
+.skee-spinnerContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 100;
+	height: 100%;
+	width: 100%;
 }
-.skee-originalLyrics {
-	float: left;
+.skee-spinner {
+	height: 30px;
+	width: 30px;
+	background-image: url('img/loading.png');
+	-webkit-animation:spin 0.6s infinite steps(11);
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 32px;
 }
-.skee-translatedLyrics {
-	float: right;
+@-webkit-keyframes spin {
+	from {background-position:0px 0;}
+	to {background-position:-330px 0;}
 }
-.skee-viewport {
-	height: 480px;
-	overflow: hidden;
+.skee-lyricsContainer .skee-spinner {
+	margin-top: 128px;
 }
+.skee-close {
+	position: absolute;
+	top: 0;
+	right: 6px;
+	color: #999;
+	font-size: 18px;
+	padding: 12px;
+}
+
+/* LyricsPlayer */
 .skee-lyricsPlayer {
 	color: #999;
+	position: relative;
 }
 .skee-lyricsContainer {
 	height: 480px;
 	padding: 0 16px;
 	border-bottom: 1px solid #FFF;
-}
-.skee-noLyrics {
-	margin-top: 16px;
-}
-.skee-lyrics li {
-	height: 32px;
-	font-size: 14px;
-	overflow: hidden;
-}
-.skee-lyrics li.selected {
-	height: auto;
-	line-height: 36px;
-	font-size: 24px;
-	margin-bottom: 20px;
-	color: #FFF;
-}
-.skee-lyrics a:hover {
-	text-decoration: underline;
-	cursor: pointer;
-	color: #FFF;
 }
 .skee-controls {
 	margin: 24px 16px 0 16px;
@@ -127,9 +128,6 @@ ul {
 .skee-toggleRepeatOne.selected {
 	background-color: #56211B;
 }
-.skee-lyricsPlayer {
-	position: relative;
-}
 .skee-dictionaryContainer {
 	display: none;
 	font-size: 14px;
@@ -152,15 +150,7 @@ ul {
 	padding: 0;
 	margin: 0;
 }
-.skee-closeDictionary {
-	position: absolute;
-	top: 0;
-	right: 6px;
-	color: #999;
-	font-size: 18px;
-	padding: 12px;
-}
-.skee-closeDictionary:hover {
+.skee-close:hover {
 	color: #FFF;
 	cursor: pointer;
 }
@@ -170,27 +160,68 @@ ul {
 	max-height: 400px;
 	overflow: auto;
 }
-.skee-spinnerContainer {
-	position: absolute;
+
+/* LyricsScroller */
+.skee-pane {
+	width: 50%;
+	display: inline-block;
+	position: relative;
+}
+.skee-originalLyrics {
+	float: left;
+}
+.skee-translatedLyrics {
+	float: right;
+}
+.skee-viewport {
+	height: 480px;
+	overflow: hidden;
+}
+.skee-noLyrics {
+	margin-top: 16px;
+}
+.skee-lyrics li {
+	height: 32px;
+	font-size: 14px;
+	overflow: hidden;
+}
+.skee-lyrics li.selected {
+	height: auto;
+	line-height: 36px;
+	font-size: 24px;
+	margin-bottom: 20px;
+	color: #FFF;
+}
+.skee-lyrics a:hover {
+	text-decoration: underline;
+	cursor: pointer;
+	color: #FFF;
+}
+
+/* LyricsUpload */
+.skee-upload {
+	margin: 8px;
+}
+.skee-lyricsUploadContainer {
+	display: none;
+	font-size: 14px;
+	line-height: 24px;
+	color: #FFF;
+	background-color: #444;
+	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 100;
-	height: 100%;
 	width: 100%;
+	height: 100%;
+	z-index: 2;
+	overflow: hidden;
 }
-.skee-spinner {
-	height: 30px;
-	width: 30px;
-	background-image: url('img/loading.png');
-	-webkit-animation:spin 0.6s infinite steps(11);
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 32px;
+.skee-lyricsUpload {
+	margin: 10px;
 }
-@-webkit-keyframes spin {
-	from {background-position:0px 0;}
-	to {background-position:-330px 0;}
-}
-.skee-lyricsContainer .skee-spinner {
-	margin-top: 128px;
+.skee-lyricsUpload .skee-column {
+	height: 500px; 
+	width: 40%; 
+	margin: 10px;
+	overflow: hidden;
 }
