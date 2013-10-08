@@ -22,8 +22,8 @@ define [
         ts = parseInt(lyricsSegments[i].ts)
         if not ts?
           throw new Error "no timestamp"
-        if i > 0 and ts <= @timestamps[i - 1]
-          throw new Error "timestamp not greater than previous"
+        #if i > 0 and ts <= @timestamps[i - 1]
+        #  throw new Error "timestamp not greater than previous"
 
         @timestamps.push(ts)
         i++
@@ -81,18 +81,20 @@ define [
       lyrics = this.get('lyrics')
       i = 0
       currentTime = this.get('musicPlayer').getTrackPosition()
-      while lyrics[i]? and lyrics[i].ts < currentTime
+      while lyrics[i]? and lyrics[i].ts <= currentTime
         i++
 
       return i - 1
 
     startTimer: () ->
-      this.timer.clear()
-      if this.get('musicPlayer').isPlaying()
-        this.timer.start(this.get('i'), this.get('musicPlayer').getTrackPosition())
+      if this.timer?
+        this.timer.clear()
+        if this.get('musicPlayer').isPlaying()
+          this.timer.start(this.get('i'), this.get('musicPlayer').getTrackPosition())
 
     clearTimer: () ->
-      this.timer.clear()
+      if this.timer?
+        this.timer.clear()
 
     # Controls
     prev: () ->
@@ -111,6 +113,9 @@ define [
       this.startTimer()
 
     pause: () ->
+      this.clearTimer()
+
+    destroy: () ->
       this.clearTimer()
   )
 
@@ -177,6 +182,7 @@ define [
 
     render: () ->
       this.$el.html(_.template($( "script.lyricsScroller" ).html()))
+      this.$el.addClass(this.model.get('class'))
 
       lyrics = this.model.get('lyrics')
       if not lyrics? or lyrics.length == 0
@@ -199,6 +205,7 @@ define [
       this.$('.skee-lookup').on('click', (event) =>
         this.trigger('lookup', event.target.innerHTML)
       )
+
       return this
 
     showNoLyricsMessage: () ->
@@ -241,6 +248,151 @@ define [
       )
   )
 
+  LyricsUploadModel = Backbone.Model.extend()
+
+  LyricsUploadView = Backbone.View.extend(
+    tagName:  "div"
+    className: "skee-upload"
+
+    render: () ->
+      lyricsUploadTemplate = $( "script.lyricsUpload" ).html()
+
+      templateModel =
+        artist : this.model.get('artist')
+        song: this.model.get('song')
+        language: this.model.get('language')
+      this.$el.html(_.template(lyricsUploadTemplate, templateModel))
+
+      this.renderEditStage()
+
+      # Activate buttons
+      this.$('.skee-saveText').on('click', () =>
+        this.saveText()
+        this.renderSyncStage()
+      )
+      this.$('.skee-syncNext').on('click', () =>
+        this.next()
+      )
+      this.$('.skee-syncPrev').on('click', () =>
+        this.prev()
+      )
+      this.$('.skee-saveLyrics').on('click', () =>
+        this.saveLyrics()
+      )
+
+      return this
+
+    renderEditStage: () ->
+      this.$('.skee-syncLyrics').hide()
+      this.$('.skee-uploadText').show()
+
+    renderSyncStage: () ->
+      lyricsTemplate = $( "script.lyrics" ).html()
+
+      originalModel =
+        lyrics : this.model.get('originalLyrics')
+      this.$('.skee-syncOriginal').html(_.template(lyricsTemplate, originalModel))
+
+      translatedModel =
+        lyrics : this.model.get('translatedLyrics')
+      this.$('.skee-syncTranslation').html(_.template(lyricsTemplate, translatedModel))
+
+      this.selectLine(0)
+
+      this.model.get('musicPlayer').setTrackPosition(0)
+
+      this.$('.skee-uploadText').hide()
+      this.$('.skee-syncLyrics').show()
+
+    saveText: () ->
+      originalLyrics = this.createLyricsObject(this.$('.skee-editOriginal').val().trim())
+      translatedLyrics = this.createLyricsObject(this.$('.skee-editTranslation').val().trim())
+
+      this.model.set(
+        originalLyrics: originalLyrics
+        translatedLyrics: translatedLyrics
+      )
+
+    createLyricsObject: (text) ->
+      lines = text.split('\n')
+      lyrics = []
+      for line in lines
+        lyricLine =
+          text: line
+          ts: 0
+        lyrics.push(lyricLine)
+      return lyrics
+
+    next: () ->
+      originalLyrics = this.model.get('originalLyrics')
+      translatedLyrics = this.model.get('translatedLyrics')
+      currentIndex = this.model.get('currentIndex')
+      currentIndex++
+
+      if originalLyrics[currentIndex]? or translatedLyrics[currentIndex]?
+        this.selectLine(currentIndex)
+
+        ts = this.model.get('musicPlayer').getTrackPosition()
+
+        if originalLyrics[currentIndex]?
+          originalLyrics[currentIndex].ts = ts
+
+        if translatedLyrics[currentIndex]?
+          translatedLyrics[currentIndex].ts = ts
+
+    prev: () ->
+      currentIndex = this.model.get('currentIndex')
+      currentIndex--
+
+      if currentIndex >= 0
+        this.selectLine(currentIndex)
+
+        originalSubtitles = this.model.get('originalSubtitles')
+        this.model.get('musicPlayer').setTrackPosition(originalSubtitles[currentIndex].ts)
+
+    selectLine: (i) ->
+      console.log('select line: ' + i)
+      this.model.set(
+        currentIndex: i
+      )
+      topMargin = -(i * 32) + 180
+      this.$('.skee-lyrics').css('margin-top', topMargin + 'px')
+
+      this.$('.skee-syncOriginal .skee-lyricLine').each((index, el) ->
+        console.log('index: ' + index + ' i: ' + i)
+        if index is i
+          $(el).addClass('selected')
+        else
+          $(el).removeClass('selected')
+      )
+      this.$('.skee-syncTranslation .skee-lyricLine').each((index, el) ->
+        if index is i
+          $(el).addClass('selected')
+        else
+          $(el).removeClass('selected')
+      )
+
+    saveLyrics: () ->
+      originalLyrics = this.model.get('originalLyrics')
+      translatedLyrics = this.model.get('translatedLyrics')
+      artist = this.model.get('artist')
+      song = this.model.get('song')
+      language = this.model.get('language')
+      dataProvider = this.model.get('dataProvider')
+
+      spinner = _.template($( "script.spinner" ).html())
+      this.$('.skee-syncLyrics').html(spinner)
+
+      returnedCount = 0
+      onSuccess = () =>
+        returnedCount++
+        if returnedCount is 2
+          this.trigger('lyricsUploaded')
+
+      dataProvider.saveLyrics(artist, song, null, originalLyrics, onSuccess)
+      dataProvider.saveLyrics(artist, song, language, translatedLyrics, onSuccess)
+  )
+
   ####################################################################
   #
   # LyricsPlayerModel
@@ -257,6 +409,10 @@ define [
       musicPlayer = this.get('musicPlayer')
       musicPlayer.onSongChange(() =>
         this.updateLyrics()
+      )
+      this.on('lyricsUpdated', () =>
+        this.updateLyrics()
+        musicPlayer.setTrackPosition(0)
       )
 
     updateLyrics: () ->
@@ -305,6 +461,7 @@ define [
       )
       this.model.get('musicPlayer').onChange(() =>
         this.syncPlayButton()
+        model.syncView() for model in this.model.get('lyricsModels')
       )
 
     render: () ->
@@ -314,6 +471,10 @@ define [
       this.enableButtons()
       this.enableKeyboard()
 
+      this.$('.skee-upload').on('click', (event) =>
+        this.upload()
+      )
+
       return this
 
     showSpinner: () ->
@@ -321,26 +482,27 @@ define [
       this.$('.skee-lyricsContainer').html(spinner)
 
     showLyrics: () ->
+      # destroy any old lyrics scrollers
+      lyricsModels = this.model.get('lyricsModels')
+      if lyricsModels?
+        model.destroy() for model in lyricsModels
+      this.$('.skee-lyricsContainer').html('')
 
       lyrics = this.model.get('lyrics')
       musicPlayer = this.model.get('musicPlayer')
-
-      lyricsModels = []
-      this.$('.skee-lyricsContainer').html('')
 
       # show original lyrics
       originalLyricsModel = new MasterLyricsScrollerModel(
         lyrics: lyrics.originalLyrics
         musicPlayer: musicPlayer
         linkWords: true
+        class: 'skee-originalLyrics'
       )
-      lyricsModels.push(originalLyricsModel)
       originalLyricsView = new LyricsScrollerView(
         model: originalLyricsModel
       )
-      originalLyrics = originalLyricsView.render().$el
-      originalLyrics.addClass('skee-originalLyrics')
-      this.$('.skee-lyricsContainer').append(originalLyrics[0])
+      this.$('.skee-lyricsContainer').append(originalLyricsView.render().el)
+
       originalLyricsView.on("lookup", (word) =>
         this.lookup(word)
       )
@@ -350,14 +512,12 @@ define [
         lyrics: lyrics.translatedLyrics
         musicPlayer: musicPlayer
         linkWords: false
+        class: 'skee-translatedLyrics'
       )
-      lyricsModels.push(translatedLyricsModel)
       translatedLyricsView = new LyricsScrollerView(
         model: translatedLyricsModel
       )
-      translatedLyrics = translatedLyricsView.render().$el
-      translatedLyrics.addClass('skee-translatedLyrics')
-      this.$('.skee-lyricsContainer').append(translatedLyrics[0])
+      this.$('.skee-lyricsContainer').append(translatedLyricsView.render().el)
 
       this.model.set(
         lyricsModels: [originalLyricsModel, translatedLyricsModel]
@@ -374,7 +534,7 @@ define [
         this.toggleRepeatOne())
 
     enableKeyboard: () ->
-      $(window).on('keydown', (event) =>
+      onKeyDown = (event) =>
         switch event.keyCode
           when 65, 37
             # a or left arrow
@@ -390,8 +550,8 @@ define [
             # d or right arrow
             this.$('.skee-next').addClass('active')
             this.next()
-          when 70, 13
-            # f or enter
+          when 70
+            # f
             this.$('.skee-toggleRepeatOne').addClass('active')
             this.toggleRepeatOne()
           when 27
@@ -399,7 +559,14 @@ define [
             this.$('.skee-dictionaryContainer').hide()
           else
             console.log(event.keyCode)
+
+      this.on('enableKeyboard', () ->
+        $(window).on('keydown', onKeyDown)
       )
+      this.on('disableKeyboard', () ->
+        $(window).unbind('keydown', onKeyDown)
+      )
+      this.trigger('enableKeyboard')
 
       $(window).on('keyup', (event) =>
         this.$('.skee-control').removeClass('active')
@@ -443,7 +610,7 @@ define [
       this.$('.skee-dictionaryResults').html(spinner)
       this.$('.skee-dictionaryContainer').show()
       
-      this.$('.skee-closeDictionary').on('click', () =>
+      this.$('.skee-close').on('click', () =>
         this.$('.skee-dictionaryContainer').hide()
       )
 
@@ -453,6 +620,38 @@ define [
       dictionary.lookup(word, fromLanguage, toLanguage, (result) ->
         this.$('.skee-dictionaryResults').html(result)
       )
+
+    upload: () ->
+      this.trigger('disableKeyboard')
+
+      musicPlayer = this.model.get('musicPlayer')
+      dataProvider = this.model.get('dataProvider')
+      lyricsUploadModel = new LyricsUploadModel(
+        artist: musicPlayer.getArtist()
+        song: musicPlayer.getSong()
+        language: "en"
+        musicPlayer: musicPlayer
+        dataProvider: dataProvider
+      )
+
+      lyricsUploadView = new LyricsUploadView(
+        model: lyricsUploadModel
+      )
+      lyricsUploadView.on("lyricsUploaded", (word) =>
+        console.log('upload complete')
+        this.$('.skee-lyricsUploadContainer').hide()
+        this.model.trigger('lyricsUpdated')
+        this.trigger('enableKeyboard')
+      )
+
+
+      this.$('.skee-close').on('click', () =>
+        this.$('.skee-lyricsUploadContainer').hide()
+        this.trigger('enableKeyboard')
+      )
+
+      this.$('.skee-lyricsUpload').html(lyricsUploadView.render().el)
+      this.$('.skee-lyricsUploadContainer').show()
   )
 
   module =

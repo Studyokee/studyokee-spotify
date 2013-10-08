@@ -1,17 +1,16 @@
 require [
   'spotify.player',
-  'tune.wiki.translation.data.provider',
-  'test.translation.data.provider',
+  'studyokee.translation.data.provider',
   'yabla.dictionary.data.provider',
   'lyrics',
+  'lyrics.upload'
   'backbone'
-], (SpotifyPlayer, TuneWikiTranslationDataProvider, TestTranslationDataProvider, YablaDictionaryDataProvider, Lyrics, Backbone) ->
+], (SpotifyPlayer, StudyokeeTranslationDataProvider, YablaDictionaryDataProvider, Lyrics, LyricsUpload, Backbone) ->
   StudyokeeModel = Backbone.Model.extend(
 
     initialize: () ->
       musicPlayer = new SpotifyPlayer()
-      dataProvider = new TuneWikiTranslationDataProvider()
-      #dataProvider = new TestTranslationDataProvider()
+      dataProvider = new StudyokeeTranslationDataProvider()
       dictionary = new YablaDictionaryDataProvider()
 
       lyricsPlayerModel = new Lyrics.model(
