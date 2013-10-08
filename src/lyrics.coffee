@@ -461,7 +461,7 @@ define [
       )
       this.model.get('musicPlayer').onChange(() =>
         this.syncPlayButton()
-        model.syncView() for model in this.model.get('lyricsModels')
+        #model.syncView() for model in this.model.get('lyricsModels')
       )
 
     render: () ->
