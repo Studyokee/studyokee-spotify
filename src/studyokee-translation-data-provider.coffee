@@ -11,17 +11,17 @@ define () ->
 
     constructor: () ->
       @lastSong = ''
-      @url = 'http://localhost:3000/lyrics'
+      @url = 'http://localhost:3000/subtitles'
 
     getSegments: (artist, song, language, callback) ->
       cacheKey = artist + ':' + song
-      console.log('Retrieving lyrics for song: \'' + cacheKey + '\'')
+      console.log('Retrieving subtitles for song: \'' + cacheKey + '\'')
       @lastSong = cacheKey
 
-      originalLyrics = null
-      translatedLyrics = null
-      originalLyricsRetrieved = false
-      translatedLyricsRetrieved = false
+      originalSubtitles = null
+      translatedSubtitles = null
+      originalSubtitlesRetrieved = false
+      translatedSubtitlesRetrieved = false
 
       currentSong = @lastSong
 
@@ -29,12 +29,12 @@ define () ->
         if currentSong is not @lastSong
           return
           
-        if originalLyricsRetrieved and translatedLyricsRetrieved
-          lyrics =
-            originalLyrics: originalLyrics
-            translatedLyrics: translatedLyrics
+        if originalSubtitlesRetrieved and translatedSubtitlesRetrieved
+          subtitles =
+            originalSubtitles: originalSubtitles
+            translatedSubtitles: translatedSubtitles
 
-          callback(lyrics)
+          callback(subtitles)
 
       $.ajax(
         type: 'GET'
@@ -42,9 +42,9 @@ define () ->
         data:
           artist: artist
           song: song
-        success: (lyrics) ->
-          originalLyrics = lyrics
-          originalLyricsRetrieved = true
+        success: (subtitles) ->
+          originalSubtitles = subtitles
+          originalSubtitlesRetrieved = true
           onSuccess()
         failure: () ->
           onSuccess()
@@ -57,15 +57,15 @@ define () ->
           artist: artist
           song: song
           language: language
-        success: (lyrics) ->
-          translatedLyrics = lyrics
-          translatedLyricsRetrieved = true
+        success: (subtitles) ->
+          translatedSubtitles = subtitles
+          translatedSubtitlesRetrieved = true
           onSuccess()
         failure: () ->
           onSuccess()
       )
 
-    saveLyrics: (artist, song, language, lyrics, callback) ->
+    saveSubtitles: (artist, song, language, subtitles, callback) ->
       postUrl = '?artist=' + escape(artist) + '&song=' + escape(song)
 
       if language?
@@ -74,7 +74,7 @@ define () ->
       $.ajax(
         type: 'POST'
         url: @url + postUrl
-        data: lyrics: lyrics
+        data: subtitles: subtitles
         success: () ->
           callback()
       )

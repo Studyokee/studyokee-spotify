@@ -7,7 +7,7 @@ module.exports = function (grunt) {
         watch: {
             coffee: {
                 files: [
-                    'src/*.coffee'
+                    'src/**/*.coffee'
                 ],
                 tasks: [
                     'coffeelint',
@@ -29,11 +29,11 @@ module.exports = function (grunt) {
         },
         coffee: {
             compile: {
-                src: ['src/*.coffee'],
+                cwd: 'src/',
+                src: ['**/*.coffee'],
                 dest: 'lib/',
                 ext: '.js',
                 expand: true,
-                flatten: true,
                 options: {
                     runtime: 'inline',
                     sourceMap: true

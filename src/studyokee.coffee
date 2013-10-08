@@ -2,10 +2,10 @@ require [
   'spotify.player',
   'studyokee.translation.data.provider',
   'yabla.dictionary.data.provider',
-  'lyrics',
-  'lyrics.upload'
+  'subtitles.player.model',
+  'subtitles.player.view',
   'backbone'
-], (SpotifyPlayer, StudyokeeTranslationDataProvider, YablaDictionaryDataProvider, Lyrics, LyricsUpload, Backbone) ->
+], (SpotifyPlayer, StudyokeeTranslationDataProvider, YablaDictionaryDataProvider, SubtitlesPlayerModel, SubtitlesPlayerView, Backbone) ->
   StudyokeeModel = Backbone.Model.extend(
 
     initialize: () ->
@@ -13,19 +13,19 @@ require [
       dataProvider = new StudyokeeTranslationDataProvider()
       dictionary = new YablaDictionaryDataProvider()
 
-      lyricsPlayerModel = new Lyrics.model(
+      subtitlesPlayerModel = new SubtitlesPlayerModel(
         dataProvider: dataProvider
         musicPlayer: musicPlayer
         dictionary: dictionary
         fromLanguage: 'es'
         toLanguage: 'en'
       )
-      lyricsPlayerView = new Lyrics.view(
-        model: lyricsPlayerModel
+      subtitlesPlayerView = new SubtitlesPlayerView(
+        model: subtitlesPlayerModel
       )
 
       this.set(
-        lyricsPlayerView: lyricsPlayerView
+        subtitlesPlayerView: subtitlesPlayerView
       )
 
   )
@@ -34,8 +34,8 @@ require [
     el: $("#skee")
     
     initialize: () ->
-      lyricsPlayer = this.model.get('lyricsPlayerView').render().el
-      this.$('.skee-main').append(lyricsPlayer)
+      subtitlesPlayer = this.model.get('subtitlesPlayerView').render().el
+      this.$('.skee-main').append(subtitlesPlayer)
   )
 
   app = new StudyokeeModel()
