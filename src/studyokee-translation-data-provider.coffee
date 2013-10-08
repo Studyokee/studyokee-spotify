@@ -43,7 +43,6 @@ define () ->
           artist: artist
           song: song
         success: (lyrics) ->
-          console.log('Found original lyrics: ' + JSON.stringify(lyrics))
           originalLyrics = lyrics
           originalLyricsRetrieved = true
           onSuccess()
@@ -59,7 +58,6 @@ define () ->
           song: song
           language: language
         success: (lyrics) ->
-          console.log('Found translated lyrics: ' + JSON.stringify(lyrics))
           translatedLyrics = lyrics
           translatedLyricsRetrieved = true
           onSuccess()
