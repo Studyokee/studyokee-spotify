@@ -9,23 +9,23 @@ define () ->
 
   class TestTranslationDataProvider
     getSegments: (artist, song, language, onSuccess) ->
-      originalLyrics = []
-      translatedLyrics = []
+      originalSubtitles = []
+      translatedSubtitles = []
       for i in [0..300]
         ts = (i-1) * 1000
-        originalLyrics.push(
+        originalSubtitles.push(
           ts: ts
           text: "Lyriques quelles sont en Francais ou autre langue et sont tres bien oui? " + i
         )
-        translatedLyrics.push(
+        translatedSubtitles.push(
           ts: ts
-          text: "Test Lyrics in English that are the translation of the other that are a great translation right? " + i
+          text: "Test Subtitles in English that are the translation of the other that are a great translation right? " + i
         )
         
       fn = () ->
         onSuccess(
-          originalLyrics: originalLyrics
-          translatedLyrics: translatedLyrics
+          originalSubtitles: originalSubtitles
+          translatedSubtitles: translatedSubtitles
         )
       setTimeout(fn, 100)
       

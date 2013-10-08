@@ -61,7 +61,7 @@ ul {
 	from {background-position:0px 0;}
 	to {background-position:-330px 0;}
 }
-.skee-lyricsContainer .skee-spinner {
+.skee-subtitlesContainer .skee-spinner {
 	margin-top: 128px;
 }
 .skee-close {
@@ -73,12 +73,12 @@ ul {
 	padding: 12px;
 }
 
-/* LyricsPlayer */
-.skee-lyricsPlayer {
+/* SubtitlesPlayer */
+.skee-subtitlesPlayer {
 	color: #999;
 	position: relative;
 }
-.skee-lyricsContainer {
+.skee-subtitlesContainer {
 	height: 480px;
 	padding: 0 16px;
 	border-bottom: 1px solid #FFF;
@@ -161,48 +161,48 @@ ul {
 	overflow: auto;
 }
 
-/* LyricsScroller */
+/* SubtitlesScroller */
 .skee-pane {
 	width: 50%;
 	display: inline-block;
 	position: relative;
 }
-.skee-originalLyrics {
+.skee-originalSubtitles {
 	float: left;
 }
-.skee-translatedLyrics {
+.skee-translatedSubtitles {
 	float: right;
 }
 .skee-viewport {
 	height: 480px;
 	overflow: hidden;
 }
-.skee-noLyrics {
+.skee-noSubtitles {
 	margin-top: 16px;
 }
-.skee-lyrics li {
+.skee-subtitles li {
 	height: 32px;
 	font-size: 14px;
 	overflow: hidden;
 }
-.skee-lyrics li.selected {
+.skee-subtitles li.selected {
 	height: auto;
 	line-height: 36px;
 	font-size: 24px;
 	margin-bottom: 20px;
 	color: #FFF;
 }
-.skee-lyrics a:hover {
+.skee-subtitles a:hover {
 	text-decoration: underline;
 	cursor: pointer;
 	color: #FFF;
 }
 
-/* LyricsUpload */
+/* SubtitlesUpload */
 .skee-upload {
 	margin: 8px;
 }
-.skee-lyricsUploadContainer {
+.skee-subtitlesUploadContainer {
 	display: none;
 	font-size: 14px;
 	line-height: 24px;
@@ -216,10 +216,15 @@ ul {
 	z-index: 2;
 	overflow: hidden;
 }
-.skee-lyricsUpload {
+.skee-subtitlesUpload {
 	margin: 10px;
 }
-.skee-lyricsUpload .skee-column {
+.skee-subtitlesUpload .skee-textarea {
+	height: 500px; 
+	width: 40%; 
+	margin: 10px;
+}
+.skee-subtitlesUpload .skee-column {
 	height: 500px; 
 	width: 40%; 
 	margin: 10px;

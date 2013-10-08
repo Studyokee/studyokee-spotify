@@ -26,16 +26,16 @@
             </div>
         </script>
 
-        <script type="text/template" class="lyricsScroller">
+        <script type="text/template" class="subtitlesScroller">
             <div class="skee-viewport">
             </div>
         </script>
 
-        <script type="text/template" class="linkedLyrics">
-            <ul class='skee-lyrics'>
-                <% _.each(lyricsAsSegments, function(lyricLine) { %>
-                    <li class='skee-lyricLine'>
-                        <% _.each(lyricLine, function(word) { %>
+        <script type="text/template" class="linkedSubtitles">
+            <ul class='skee-subtitles'>
+                <% _.each(subtitlesAsSegments, function(subtitle) { %>
+                    <li class='skee-subtitle'>
+                        <% _.each(subtitle, function(word) { %>
                             <a class='skee-lookup'><%= word %></a>
                         <% }); %>
                     </li>
@@ -43,25 +43,25 @@
             </ul>
         </script>
 
-        <script type="text/template" class="lyrics">
-            <ul class='skee-lyrics'>
-                <% _.each(lyrics, function(lyricLine) { %>
-                    <li class='skee-lyricLine'>
-                      <%= lyricLine.text %>
+        <script type="text/template" class="subtitles">
+            <ul class='skee-subtitles'>
+                <% _.each(subtitles, function(subtitle) { %>
+                    <li class='skee-subtitle'>
+                      <%= subtitle.text %>
                     </li>
                 <% }); %>
             </ul>
         </script>
 
-        <script type="text/template" class="noLyrics">
-            <div class="skee-noLyrics">
-                Sorry, there are no lyrics for this song in this language
+        <script type="text/template" class="noSubtitles">
+            <div class="skee-noSubtitles">
+                Sorry, there are no subtitles for this song in this language
             </div>
         </script>
 
-        <script type="text/template" class="lyricsPlayer">
-            <button class="skee-upload">Edit Lyrics</button>
-            <div class="skee-lyricsContainer"></div>
+        <script type="text/template" class="subtitlesPlayer">
+            <button class="skee-upload">Edit Subtitles</button>
+            <div class="skee-subtitlesContainer"></div>
             <div class="skee-controls">
                 <a class="skee-prev skee-control">
                     <div class="skee-icon"></div>
@@ -80,16 +80,16 @@
                 <a class="skee-close">×</a>
                 <div class="skee-dictionaryResults"></div>
             </div>
-            <div class="skee-lyricsUploadContainer">
+            <div class="skee-subtitlesUploadContainer">
                 <a class="skee-close">×</a>
-                <div class="skee-lyricsUpload"></div>
+                <div class="skee-subtitlesUpload"></div>
             </div>
             <div class="skee-instructions">
                 a/←: Prev, s/_: Play/Pause, d/→: Next, f/↲: Repeat
             </div>
         </script>
 
-        <script type="text/template" class="lyricsUpload">
+        <script type="text/template" class="subtitlesUpload">
             <div>
                 Artist: <%= artist %> &nbsp;&nbsp;&nbsp;
                 Title: <%= song %> &nbsp;&nbsp;&nbsp;
@@ -99,14 +99,14 @@
                 <div>
                     <button class="skee-saveText">Save Text</button>
                 </div>
-                <textarea class="skee-editOriginal skee-column" style="float:left;"></textarea>
-                <textarea class="skee-editTranslation skee-column" style="float: right;"></textarea>
+                <textarea class="skee-editOriginal skee-textarea" style="float:left;"></textarea>
+                <textarea class="skee-editTranslation skee-textarea" style="float: right;"></textarea>
             </div>
-            <div class="skee-syncLyrics" style="display:none;">
+            <div class="skee-syncSubtitles" style="display:none;">
                 <div>
                     <button class="skee-syncPrev">Prev</button>
                     <button class="skee-syncNext">Next</button>
-                    <button class="skee-saveLyrics">Save Lyrics</button>
+                    <button class="skee-saveSubtitles">Save Subtitles</button>
                 </div>
                 <div class="skee-syncOriginal skee-column" style="float:left;"></div>
                 <div class="skee-syncTranslation skee-column" style="float: right;"></div>

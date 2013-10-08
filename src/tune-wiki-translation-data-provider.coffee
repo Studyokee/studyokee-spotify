@@ -18,41 +18,41 @@ define () ->
         return
       @lastSong = cacheKey
 
-      originalLyrics = null
-      translatedLyrics = null
+      originalSubtitles = null
+      translatedSubtitles = null
       currentSong = @lastSong
 
       onSuccess = () =>
         if currentSong is not @lastSong
           return
           
-        if originalLyrics? and translatedLyrics?
-          lyrics =
-            originalLyrics: originalLyrics
-            translatedLyrics: translatedLyrics
+        if originalSubtitles? and translatedSubtitles?
+          subtitles =
+            originalSubtitles: originalSubtitles
+            translatedSubtitles: translatedSubtitles
 
-          callback(this.purifyData(lyrics))
+          callback(this.purifyData(subtitles))
 
       createArrayFromObject = (obj) ->
-        lyricsArray = []
+        subtitlesArray = []
         i = 0
         while obj[i+1]?
-          lyricsArray.push(obj[i+1])
+          subtitlesArray.push(obj[i+1])
           i++
 
-        return lyricsArray
+        return subtitlesArray
 
-      onSuccessOriginal = (lyrics) ->
-        originalLyrics = createArrayFromObject(lyrics)
+      onSuccessOriginal = (subtitles) ->
+        originalSubtitles = createArrayFromObject(subtitles)
         onSuccess()
 
-      onSuccessTranslated = (lyrics) ->
-        translatedLyrics = createArrayFromObject(lyrics)
+      onSuccessTranslated = (subtitles) ->
+        translatedSubtitles = createArrayFromObject(subtitles)
         onSuccess()
 
       $.ajax(
         type: 'GET'
-        url: 'http://d378swyygivki.cloudfront.net/lyrics',
+        url: 'http://d378swyygivki.cloudfront.net/subtitles',
         data:
           artist: artist
           song: song
@@ -61,7 +61,7 @@ define () ->
 
       $.ajax(
         type: 'GET'
-        url: 'http://d378swyygivki.cloudfront.net/lyrics'
+        url: 'http://d378swyygivki.cloudfront.net/subtitles'
         data:
           artist: artist
           song: song
@@ -69,28 +69,28 @@ define () ->
         success: onSuccessTranslated
       )
 
-    purifyData: (lyrics) ->
-      offset = this.getBestOffset(lyrics)
+    purifyData: (subtitles) ->
+      offset = this.getBestOffset(subtitles)
 
-      # For lyric line in original lyrics add matching translated lyric using adjusted offset
-      translatedLyrics = []
-      for i in [0...lyrics.originalLyrics.length]
-        lyricLine = lyrics.translatedLyrics[i+offset]
-        translatedLyrics.push(
-          ts: lyrics.originalLyrics[i].ts
-          text: if lyricLine? then lyricLine.text else ""
+      # For lyric line in original subtitles add matching translated lyric using adjusted offset
+      translatedSubtitles = []
+      for i in [0...subtitles.originalSubtitles.length]
+        subtitle = subtitles.translatedSubtitles[i+offset]
+        translatedSubtitles.push(
+          ts: subtitles.originalSubtitles[i].ts
+          text: if subtitle? then subtitle.text else ""
         )
 
-      lyrics.translatedLyrics = translatedLyrics
+      subtitles.translatedSubtitles = translatedSubtitles
 
-      return lyrics
+      return subtitles
 
-    getBestOffset: (lyrics) ->
+    getBestOffset: (subtitles) ->
       minDiff = null
       offset = 0
 
       for i in [-10...10]
-        avgDiff = this.compareWordCounts(lyrics.originalLyrics, lyrics.translatedLyrics, i)
+        avgDiff = this.compareWordCounts(subtitles.originalSubtitles, subtitles.translatedSubtitles, i)
 
         if not minDiff?
           minDiff = avgDiff
@@ -100,18 +100,18 @@ define () ->
 
       return offset
 
-    compareWordCounts: (originalLyrics, translatedLyrics, offset) ->
+    compareWordCounts: (originalSubtitles, translatedSubtitles, offset) ->
       totalDelta = 0
-      totalDelta += this.getWordDelta(originalLyrics[i], translatedLyrics[i + offset]) for i in [0...originalLyrics.length]
+      totalDelta += this.getWordDelta(originalSubtitles[i], translatedSubtitles[i + offset]) for i in [0...originalSubtitles.length]
 
-      return totalDelta / (originalLyrics.length - Math.abs(offset))
+      return totalDelta / (originalSubtitles.length - Math.abs(offset))
 
-    getWordDelta: (lyrics1, lyrics2) ->
-      if not lyrics1? or not lyrics2?
+    getWordDelta: (subtitles1, subtitles2) ->
+      if not subtitles1? or not subtitles2?
         return 0
 
-      words1 = lyrics1.text.split(' ')
-      words2 = lyrics2.text.split(' ')
+      words1 = subtitles1.text.split(' ')
+      words2 = subtitles2.text.split(' ')
 
       return Math.abs(words1.length - words2.length)
 
