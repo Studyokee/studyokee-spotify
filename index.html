@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
     <head>
         <script src="http://localhost:35729/livereload.js"></script>
         <script src="/components/requirejs/require.js"></script>
@@ -53,10 +54,13 @@
         </script>
 
         <script type="text/template" class="noLyrics">
-            <div class="skee-noLyrics">Sorry, there are no lyrics for this song in this language</div>
+            <div class="skee-noLyrics">
+                Sorry, there are no lyrics for this song in this language
+            </div>
         </script>
 
         <script type="text/template" class="lyricsPlayer">
+            <button class="skee-upload">Edit Lyrics</button>
             <div class="skee-lyricsContainer"></div>
             <div class="skee-controls">
                 <a class="skee-prev skee-control">
@@ -73,11 +77,39 @@
                 </a>
             </div>
             <div class="skee-dictionaryContainer">
-                <a class="skee-closeDictionary">×</a>
+                <a class="skee-close">×</a>
                 <div class="skee-dictionaryResults"></div>
+            </div>
+            <div class="skee-lyricsUploadContainer">
+                <a class="skee-close">×</a>
+                <div class="skee-lyricsUpload"></div>
             </div>
             <div class="skee-instructions">
                 a/←: Prev, s/_: Play/Pause, d/→: Next, f/↲: Repeat
+            </div>
+        </script>
+
+        <script type="text/template" class="lyricsUpload">
+            <div>
+                Artist: <%= artist %> &nbsp;&nbsp;&nbsp;
+                Title: <%= song %> &nbsp;&nbsp;&nbsp;
+                Language: <%= language %>
+            </div>
+            <div class="skee-uploadText">
+                <div>
+                    <button class="skee-saveText">Save Text</button>
+                </div>
+                <textarea class="skee-editOriginal skee-column" style="float:left;"></textarea>
+                <textarea class="skee-editTranslation skee-column" style="float: right;"></textarea>
+            </div>
+            <div class="skee-syncLyrics" style="display:none;">
+                <div>
+                    <button class="skee-syncPrev">Prev</button>
+                    <button class="skee-syncNext">Next</button>
+                    <button class="skee-saveLyrics">Save Lyrics</button>
+                </div>
+                <div class="skee-syncOriginal skee-column" style="float:left;"></div>
+                <div class="skee-syncTranslation skee-column" style="float: right;"></div>
             </div>
         </script>
         <!-- End Templates -->
